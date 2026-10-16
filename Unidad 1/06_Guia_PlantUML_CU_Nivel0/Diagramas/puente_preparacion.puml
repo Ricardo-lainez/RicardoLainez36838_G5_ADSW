@@ -1,0 +1,13 @@
+@startuml
+left to right direction
+actor "Cocinero" as Cocinero
+boundary "Pantalla Cocina" as UI
+control "Control Preparación" as Ctrl
+entity "Pedido" as Ped
+database "Repositorio Pedido" as Repo
+Cocinero --> UI : revisa pendientes y cambia estado
+UI --> Ctrl : solicita pendientes y envía nuevo estado
+Ctrl --> Ped : actualiza estado en secuencia válida
+Ctrl --> Repo : consulta pendientes y guarda el cambio de estado
+Ctrl --> UI : muestra estado actualizado
+@enduml

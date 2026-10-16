@@ -1,0 +1,19 @@
+@startuml
+left to right direction
+actor "Cliente" as Cliente
+boundary "Pantalla Menú Digital" as UI
+control "Control Pedido QR" as Ctrl
+entity "Mesa" as Mesa
+entity "Producto" as Prod
+entity "Pedido" as Ped
+database "Repositorio Pedido" as Repo
+boundary "Pantalla Cocina" as UICocina
+Cliente --> UI : escanea QR y selecciona productos
+UI --> Ctrl : envía mesa, productos, cantidades y observaciones
+Ctrl --> Mesa : identifica mesa asociada al QR
+Ctrl --> Prod : consulta menú, precios y promociones
+Ctrl --> Ped : crea pedido (pendiente)
+Ctrl --> Repo : guarda el pedido registrado
+Ctrl --> UICocina : envía pedido a cocina
+Ctrl --> UI : confirma resultado
+@enduml

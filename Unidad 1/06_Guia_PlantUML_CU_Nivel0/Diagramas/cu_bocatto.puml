@@ -1,0 +1,30 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "Mesero" as Mesero
+actor "Cliente" as Cliente
+actor "Cocinero" as Cocinero
+actor "Cajero" as Cajero
+
+rectangle "Sistema de Gestión de Pedidos Bocatto" {
+  usecase "Tomar pedido en mesa" as UC1
+  usecase "Realizar pedido por QR" as UC2
+  usecase "Gestionar preparación del pedido" as UC3
+  usecase "Cobrar pedido en la caja" as UC4
+}
+
+Mesero --> UC1
+Cliente --> UC2
+Cocinero --> UC3
+Cajero --> UC4
+
+note right of UC2
+Datos mínimos del pedido:
+- Número de mesa
+- Productos y cantidades (al menos uno)
+- Observaciones (opcional)
+- Estado inicial: pendiente
+end note
+@enduml

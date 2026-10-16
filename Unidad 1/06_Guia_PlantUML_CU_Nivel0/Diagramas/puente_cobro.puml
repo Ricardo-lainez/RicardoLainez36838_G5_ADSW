@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+actor "Cajero" as Cajero
+boundary "Pantalla Caja" as UI
+control "Control Cobro" as Ctrl
+entity "Mesa" as Mesa
+entity "Pedido" as Ped
+database "Repositorio Pedido" as Repo
+Cajero --> UI : busca pedido por número de mesa
+UI --> Ctrl : envía número de mesa y método de pago
+Ctrl --> Mesa : verifica número de mesa
+Ctrl --> Ped : verifica estado listo y registra pago (pagado)
+Ctrl --> Repo : consulta el pedido y guarda el pago
+Ctrl --> UI : muestra detalle, total y confirma pago
+@enduml

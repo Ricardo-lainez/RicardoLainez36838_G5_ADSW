@@ -1,0 +1,19 @@
+@startuml
+left to right direction
+actor "Mesero" as Mesero
+boundary "Pantalla Pedido" as UI
+control "Control Pedido" as Ctrl
+entity "Mesa" as Mesa
+entity "Producto" as Prod
+entity "Pedido" as Ped
+database "Repositorio Pedido" as Repo
+boundary "Pantalla Cocina" as UICocina
+Mesero --> UI : solicita registrar pedido en mesa
+UI --> Ctrl : envía mesa, productos, cantidades y observaciones
+Ctrl --> Mesa : verifica número de mesa
+Ctrl --> Prod : consulta productos disponibles
+Ctrl --> Ped : crea pedido (pendiente)
+Ctrl --> Repo : guarda el pedido registrado
+Ctrl --> UICocina : envía pedido a cocina
+Ctrl --> UI : confirma resultado
+@enduml
