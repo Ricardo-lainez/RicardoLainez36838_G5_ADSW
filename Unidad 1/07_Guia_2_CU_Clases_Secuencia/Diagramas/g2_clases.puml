@@ -1,0 +1,130 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+class "PantallaPedido" <<boundary>> {
+  - numeroMesa: int
+  - productosSeleccionados: List<Producto>
+  - observaciones: String
+  + seleccionarMesa(numeroMesa: int)
+  + agregarProducto(producto: Producto, cantidad: int)
+  + clickRegistrarPedido()
+  + mostrarMensaje(mensaje: String)
+}
+
+class "PantallaMenuDigital" <<boundary>> {
+  - codigoQR: String
+  + escanearQR(codigoQR: String)
+  + mostrarMenu(productos: List<Producto>)
+  + seleccionarProducto(producto: Producto, cantidad: int)
+  + clickConfirmarPedido()
+  + mostrarMensaje(mensaje: String)
+}
+
+class "PantallaCocina" <<boundary>> {
+  + mostrarPendientes(pedidos: List<Pedido>)
+  + seleccionarPedido(idPedido: String)
+  + clickCambiarEstado(nuevoEstado: String)
+  + notificarNuevoPedido(pedido: Pedido)
+  + mostrarMensaje(mensaje: String)
+}
+
+class "PantallaCaja" <<boundary>> {
+  - numeroMesa: int
+  + buscarPorMesa(numeroMesa: int)
+  + mostrarDetalle(pedido: Pedido)
+  + seleccionarMetodoPago(metodoPago: String)
+  + clickRegistrarPago()
+  + mostrarMensaje(mensaje: String)
+}
+
+class "ControlPedido" <<control>> {
+  + registrarPedido(numeroMesa: int, productos: List<Producto>, cantidades: List<int>, observaciones: String): Resultado
+  + validarPedido(productos: List<Producto>): boolean
+}
+
+class "ControlPedidoQR" <<control>> {
+  + obtenerMenu(codigoQR: String): List<Producto>
+  + registrarPedidoQR(codigoQR: String, productos: List<Producto>, cantidades: List<int>, observaciones: String): Resultado
+  + validarPedido(productos: List<Producto>): boolean
+}
+
+class "ControlPreparacion" <<control>> {
+  + listarPendientes(): List<Pedido>
+  + cambiarEstado(idPedido: String, nuevoEstado: String): Resultado
+  + validarSecuencia(estadoActual: String, nuevoEstado: String): boolean
+}
+
+class "ControlCobro" <<control>> {
+  + buscarPedidoPorMesa(numeroMesa: int): Pedido
+  + registrarPago(idPedido: String, metodoPago: String): Resultado
+  + validarPedidoListo(pedido: Pedido): boolean
+}
+
+class "Pedido" <<entity>> {
+  - id: String
+  - numeroMesa: int
+  - productos: List<Producto>
+  - cantidades: List<int>
+  - observaciones: String
+  - estado: String
+  - metodoPago: String
+  - total: double
+  + Pedido(numeroMesa: int, productos: List<Producto>, cantidades: List<int>, observaciones: String)
+  + cambiarEstado(nuevoEstado: String): void
+  + calcularTotal(): double
+  + registrarPago(metodoPago: String): void
+  + getEstado(): String
+}
+
+class "Mesa" <<entity>> {
+  - numero: int
+  - codigoQR: String
+  + getNumero(): int
+  + getCodigoQR(): String
+  + validarNumero(numero: int): boolean
+}
+
+class "Producto" <<entity>> {
+  - id: String
+  - nombre: String
+  - precio: double
+  - disponible: boolean
+  + estaDisponible(): boolean
+  + getPrecio(): double
+}
+
+class "RepositorioPedido" <<repository>> {
+  + guardar(pedido: Pedido): void
+  + buscarPorId(idPedido: String): Pedido
+  + buscarPorMesa(numeroMesa: int): Pedido
+  + listarPendientes(): List<Pedido>
+  + actualizar(pedido: Pedido): void
+}
+
+PantallaPedido --> ControlPedido : solicita registro
+PantallaMenuDigital --> ControlPedidoQR : solicita menú y registro
+PantallaCocina --> ControlPreparacion : solicita cambio de estado
+PantallaCaja --> ControlCobro : solicita cobro
+
+ControlPedido --> Pedido : crea
+ControlPedido --> RepositorioPedido : guarda
+ControlPedidoQR --> Pedido : crea
+ControlPedidoQR --> RepositorioPedido : guarda
+ControlPreparacion --> Pedido : actualiza estado
+ControlPreparacion --> RepositorioPedido : consulta y actualiza
+ControlCobro --> Pedido : registra pago
+ControlCobro --> RepositorioPedido : consulta y actualiza
+
+ControlPedido ..> Mesa : verifica
+ControlPedido ..> Producto : consulta
+ControlPedido ..> PantallaCocina : notifica
+ControlPedidoQR ..> Mesa : identifica
+ControlPedidoQR ..> Producto : consulta
+ControlPedidoQR ..> PantallaCocina : notifica
+ControlCobro ..> Mesa : verifica
+
+RepositorioPedido o-- "0..*" Pedido : almacena
+Pedido --> "1" Mesa : se asocia a
+Pedido --> "1..*" Producto : contiene
+@enduml

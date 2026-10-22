@@ -1,0 +1,31 @@
+@startuml
+title Secuencia de análisis - Realizar pedido por QR
+actor "Cliente" as Cliente
+boundary "PantallaMenuDigital" as UI
+control "ControlPedidoQR" as Ctrl
+entity "Mesa" as Mesa
+entity "Producto" as Prod
+entity "Pedido" as Ped
+database "RepositorioPedido" as Repo
+boundary "PantallaCocina" as UICocina
+
+Cliente -> UI : escanearQR(codigoQR)
+UI -> Ctrl : obtenerMenu(codigoQR)
+Ctrl -> Mesa : getNumero()
+Mesa --> Ctrl : numeroMesa
+Ctrl -> Prod : estaDisponible()
+Prod --> Ctrl : productos disponibles
+Ctrl --> UI : listaProductos
+UI --> Cliente : mostrarMenu(productos)
+Cliente -> UI : seleccionarProducto(producto, cantidad)
+Cliente -> UI : clickConfirmarPedido()
+UI -> Ctrl : registrarPedidoQR(codigoQR, productos, cantidades, observaciones)
+Ctrl -> Ctrl : validarPedido(productos)
+Ctrl -> Ped : new Pedido(numeroMesa, productos, cantidades, observaciones)
+note right of Ped : estado = "pendiente"
+Ctrl -> Repo : guardar(Ped)
+Repo --> Ctrl : guardado correcto
+Ctrl -> UICocina : notificarNuevoPedido(Ped)
+Ctrl --> UI : Resultado exitoso
+UI --> Cliente : mostrarMensaje("Pedido enviado a cocina")
+@enduml

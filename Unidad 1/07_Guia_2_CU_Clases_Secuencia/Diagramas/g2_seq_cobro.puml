@@ -1,0 +1,30 @@
+@startuml
+title Secuencia de análisis - Cobrar pedido en la caja
+actor "Cajero" as Cajero
+boundary "PantallaCaja" as UI
+control "ControlCobro" as Ctrl
+entity "Mesa" as Mesa
+database "RepositorioPedido" as Repo
+entity "Pedido" as Ped
+
+Cajero -> UI : buscarPorMesa(numeroMesa)
+UI -> Ctrl : buscarPedidoPorMesa(numeroMesa)
+Ctrl -> Mesa : validarNumero(numeroMesa)
+Mesa --> Ctrl : true
+Ctrl -> Repo : buscarPorMesa(numeroMesa)
+Repo --> Ctrl : Pedido encontrado
+Ctrl -> Ctrl : validarPedidoListo(Ped)
+Ctrl -> Ped : calcularTotal()
+Ped --> Ctrl : total
+Ctrl --> UI : detalle y total
+UI --> Cajero : mostrarDetalle(pedido)
+Cajero -> UI : seleccionarMetodoPago(metodoPago)
+Cajero -> UI : clickRegistrarPago()
+UI -> Ctrl : registrarPago(idPedido, metodoPago)
+Ctrl -> Ped : registrarPago(metodoPago)
+note right of Ped : estado = "pagado"\nhabilitado para entregar
+Ctrl -> Repo : actualizar(Ped)
+Repo --> Ctrl : actualización correcta
+Ctrl --> UI : Resultado exitoso
+UI --> Cajero : mostrarMensaje("Pago registrado")
+@enduml

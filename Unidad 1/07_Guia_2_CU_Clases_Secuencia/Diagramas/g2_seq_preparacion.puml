@@ -1,0 +1,27 @@
+@startuml
+title Secuencia de análisis - Gestionar preparación del pedido
+actor "Cocinero" as Cocinero
+boundary "PantallaCocina" as UI
+control "ControlPreparacion" as Ctrl
+database "RepositorioPedido" as Repo
+entity "Pedido" as Ped
+
+Cocinero -> UI : revisa pedidos pendientes
+UI -> Ctrl : listarPendientes()
+Ctrl -> Repo : listarPendientes()
+Repo --> Ctrl : listaPedidos
+Ctrl --> UI : listaPedidos
+UI --> Cocinero : mostrarPendientes(pedidos)
+Cocinero -> UI : seleccionarPedido(idPedido)
+Cocinero -> UI : clickCambiarEstado(nuevoEstado)
+UI -> Ctrl : cambiarEstado(idPedido, nuevoEstado)
+Ctrl -> Repo : buscarPorId(idPedido)
+Repo --> Ctrl : Pedido encontrado
+Ctrl -> Ctrl : validarSecuencia(estadoActual, nuevoEstado)
+Ctrl -> Ped : cambiarEstado(nuevoEstado)
+note right of Ped : en preparación, listo\no listo para entregar
+Ctrl -> Repo : actualizar(Ped)
+Repo --> Ctrl : actualización correcta
+Ctrl --> UI : Resultado exitoso
+UI --> Cocinero : mostrarMensaje("Estado actualizado")
+@enduml
