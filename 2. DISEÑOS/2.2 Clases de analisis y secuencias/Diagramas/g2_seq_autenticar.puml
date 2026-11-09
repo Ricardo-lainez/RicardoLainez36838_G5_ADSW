@@ -1,0 +1,21 @@
+@startuml
+title Secuencia de análisis - Autenticar en el sistema
+actor "Personal\n(Mesero, Operador, Cocinero,\nCajero o Administrador)" as Personal
+boundary "PantallaLogin" as UI
+control "ControlAutenticacion" as Ctrl
+database "RepositorioUsuario" as Repo
+entity "Usuario" as Usr
+
+Personal -> UI : ingresarCredenciales(nombreUsuario, contrasena)
+Personal -> UI : clickIngresar()
+UI -> Ctrl : autenticar(nombreUsuario, contrasena)
+Ctrl -> Repo : buscarPorNombre(nombreUsuario)
+Repo --> Ctrl : Usuario encontrado
+Ctrl -> Usr : validarContrasena(contrasena)
+Usr --> Ctrl : true
+Ctrl -> Usr : getRol()
+Usr --> Ctrl : rol
+Ctrl -> Ctrl : obtenerPermisos(rol)
+Ctrl --> UI : Resultado exitoso y permisos del rol
+UI --> Personal : mostrarFuncionesRol(permisos)
+@enduml

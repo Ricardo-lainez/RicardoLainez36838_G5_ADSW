@@ -1,0 +1,22 @@
+@startuml
+title Secuencia de análisis - Consultar estado de pedido
+actor "Cliente" as Cliente
+boundary "PantallaEstadoPedido" as UI
+control "ControlConsultaEstado" as Ctrl
+entity "Mesa" as Mesa
+database "RepositorioPedido" as Repo
+entity "Pedido" as Ped
+
+Cliente -> UI : escanearQR(codigoQR)
+Cliente -> UI : clickConsultarEstado()
+UI -> Ctrl : consultarEstado(codigoQR)
+Ctrl -> Mesa : getNumero()
+Mesa --> Ctrl : numeroMesa
+Ctrl -> Repo : buscarPorMesa(numeroMesa)
+Repo --> Ctrl : Pedido encontrado
+Ctrl -> Ped : getEstado()
+Ped --> Ctrl : estado actual
+Ctrl --> UI : estado del pedido
+UI --> Cliente : mostrarEstado(estado)
+note right of UI : pendiente, en preparación,\nlisto o listo para entregar
+@enduml

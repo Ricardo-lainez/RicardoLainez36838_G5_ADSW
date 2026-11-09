@@ -1,0 +1,41 @@
+@startuml
+title Secuencia de análisis - Administrar configuración del sistema
+actor "Administrador" as Admin
+boundary "PantallaAdministracion" as UI
+control "ControlConfiguracion" as Ctrl
+entity "Producto" as Prod
+entity "Mesa" as Mesa
+entity "Promocion" as Promo
+database "RepositorioConfiguracion" as RepoConf
+database "RepositorioPedido" as RepoPed
+
+== Administrar menú digital ==
+Admin -> UI : editarProducto(nombre, precio, disponible)
+UI -> Ctrl : guardarProducto(nombre, precio, disponible)
+Ctrl -> Prod : actualizarDatos(nombre, precio, disponible)
+Ctrl -> RepoConf : guardarProducto(Prod)
+RepoConf --> Ctrl : guardado correcto
+
+== Gestionar QR por mesa ==
+Admin -> UI : asignarQR(numeroMesa)
+UI -> Ctrl : asignarQR(numeroMesa)
+Ctrl -> Mesa : asignarCodigoQR(codigoQR)
+Ctrl -> RepoConf : guardarMesa(Mesa)
+RepoConf --> Ctrl : guardado correcto
+
+== Gestionar promociones ==
+Admin -> UI : registrarPromocion(descripcion, vigente)
+UI -> Ctrl : guardarPromocion(descripcion, vigente)
+Ctrl -> Promo : new Promocion(descripcion, vigente)
+Ctrl -> RepoConf : guardarPromocion(Promo)
+RepoConf --> Ctrl : guardado correcto
+
+== Consultar reportes básicos ==
+Admin -> UI : clickConsultarReportes()
+UI -> Ctrl : consultarReportes()
+Ctrl -> RepoPed : listarPedidos()
+RepoPed --> Ctrl : listaPedidos
+Ctrl --> UI : reporte básico
+UI --> Admin : mostrarReporte(reporte)
+note right of UI : Los cambios se reflejan en el\nmenú del cliente y en los módulos del personal
+@enduml

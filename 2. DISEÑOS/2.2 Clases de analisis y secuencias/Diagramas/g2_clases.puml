@@ -1,0 +1,238 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+class "PantallaLogin" <<boundary>> {
+  - nombreUsuario: String
+  + ingresarCredenciales(nombreUsuario: String, contrasena: String)
+  + clickIngresar()
+  + mostrarFuncionesRol(permisos: List<String>)
+  + mostrarMensaje(mensaje: String)
+}
+
+class "PantallaPedidoTelefonico" <<boundary>> {
+  - productosSeleccionados: List<Producto>
+  - datosCliente: String
+  - datosEntrega: String
+  - observaciones: String
+  + agregarProducto(producto: Producto, cantidad: int)
+  + ingresarDatosEntrega(datosCliente: String, datosEntrega: String)
+  + clickRegistrarPedido()
+  + mostrarMensaje(mensaje: String)
+}
+
+class "PantallaPedido" <<boundary>> {
+  - numeroMesa: int
+  - productosSeleccionados: List<Producto>
+  - observaciones: String
+  + seleccionarMesa(numeroMesa: int)
+  + agregarProducto(producto: Producto, cantidad: int)
+  + clickRegistrarPedido()
+  + mostrarMensaje(mensaje: String)
+}
+
+class "PantallaMenuDigital" <<boundary>> {
+  - codigoQR: String
+  + escanearQR(codigoQR: String)
+  + mostrarMenu(productos: List<Producto>)
+  + seleccionarProducto(producto: Producto, cantidad: int)
+  + clickConfirmarPedido()
+  + mostrarMensaje(mensaje: String)
+}
+
+class "PantallaCocina" <<boundary>> {
+  + mostrarPendientes(pedidos: List<Pedido>)
+  + seleccionarPedido(idPedido: String)
+  + clickCambiarEstado(nuevoEstado: String)
+  + notificarNuevoPedido(pedido: Pedido)
+  + mostrarMensaje(mensaje: String)
+}
+
+class "PantallaCaja" <<boundary>> {
+  - numeroMesa: int
+  + buscarPorMesa(numeroMesa: int)
+  + mostrarDetalle(pedido: Pedido)
+  + seleccionarMetodoPago(metodoPago: String)
+  + clickRegistrarPago()
+  + mostrarMensaje(mensaje: String)
+}
+
+class "PantallaEstadoPedido" <<boundary>> {
+  - codigoQR: String
+  + escanearQR(codigoQR: String)
+  + clickConsultarEstado()
+  + mostrarEstado(estado: String)
+}
+
+class "PantallaAdministracion" <<boundary>> {
+  + editarProducto(nombre: String, precio: double, disponible: boolean)
+  + asignarQR(numeroMesa: int)
+  + registrarPromocion(descripcion: String, vigente: boolean)
+  + clickConsultarReportes()
+  + mostrarReporte(reporte: String)
+  + mostrarMensaje(mensaje: String)
+}
+
+class "ControlAutenticacion" <<control>> {
+  + autenticar(nombreUsuario: String, contrasena: String): Resultado
+  + obtenerPermisos(rol: String): List<String>
+}
+
+class "ControlPedidoTelefonico" <<control>> {
+  + registrarPedidoTelefonico(productos: List<Producto>, cantidades: List<int>, datosCliente: String, datosEntrega: String, observaciones: String): Resultado
+  + validarPedido(productos: List<Producto>): boolean
+}
+
+class "ControlPedido" <<control>> {
+  + registrarPedido(numeroMesa: int, productos: List<Producto>, cantidades: List<int>, observaciones: String): Resultado
+  + validarPedido(productos: List<Producto>): boolean
+}
+
+class "ControlPedidoQR" <<control>> {
+  + obtenerMenu(codigoQR: String): List<Producto>
+  + registrarPedidoQR(codigoQR: String, productos: List<Producto>, cantidades: List<int>, observaciones: String): Resultado
+  + validarPedido(productos: List<Producto>): boolean
+}
+
+class "ControlPreparacion" <<control>> {
+  + listarPendientes(): List<Pedido>
+  + cambiarEstado(idPedido: String, nuevoEstado: String): Resultado
+  + validarSecuencia(estadoActual: String, nuevoEstado: String): boolean
+}
+
+class "ControlCobro" <<control>> {
+  + buscarPedidoPorMesa(numeroMesa: int): Pedido
+  + registrarPago(idPedido: String, metodoPago: String): Resultado
+  + validarPedidoListo(pedido: Pedido): boolean
+}
+
+class "ControlConsultaEstado" <<control>> {
+  + consultarEstado(codigoQR: String): String
+}
+
+class "ControlConfiguracion" <<control>> {
+  + guardarProducto(nombre: String, precio: double, disponible: boolean): Resultado
+  + asignarQR(numeroMesa: int): Resultado
+  + guardarPromocion(descripcion: String, vigente: boolean): Resultado
+  + consultarReportes(): String
+}
+
+class "Pedido" <<entity>> {
+  - id: String
+  - numeroMesa: int
+  - productos: List<Producto>
+  - cantidades: List<int>
+  - observaciones: String
+  - datosCliente: String
+  - datosEntrega: String
+  - estado: String
+  - metodoPago: String
+  - total: double
+  + Pedido(numeroMesa: int, productos: List<Producto>, cantidades: List<int>, observaciones: String)
+  + Pedido(productos: List<Producto>, cantidades: List<int>, datosCliente: String, datosEntrega: String, observaciones: String)
+  + cambiarEstado(nuevoEstado: String): void
+  + calcularTotal(): double
+  + registrarPago(metodoPago: String): void
+  + getEstado(): String
+}
+
+class "Mesa" <<entity>> {
+  - numero: int
+  - codigoQR: String
+  + getNumero(): int
+  + getCodigoQR(): String
+  + validarNumero(numero: int): boolean
+  + asignarCodigoQR(codigoQR: String): void
+}
+
+class "Producto" <<entity>> {
+  - id: String
+  - nombre: String
+  - precio: double
+  - disponible: boolean
+  + estaDisponible(): boolean
+  + getPrecio(): double
+  + actualizarDatos(nombre: String, precio: double, disponible: boolean): void
+}
+
+class "Promocion" <<entity>> {
+  - id: String
+  - descripcion: String
+  - vigente: boolean
+  + estaVigente(): boolean
+}
+
+class "Usuario" <<entity>> {
+  - nombreUsuario: String
+  - contrasena: String
+  - rol: String
+  + validarContrasena(contrasena: String): boolean
+  + getRol(): String
+}
+
+class "RepositorioPedido" <<repository>> {
+  + guardar(pedido: Pedido): void
+  + buscarPorId(idPedido: String): Pedido
+  + buscarPorMesa(numeroMesa: int): Pedido
+  + listarPendientes(): List<Pedido>
+  + actualizar(pedido: Pedido): void
+  + listarPedidos(): List<Pedido>
+}
+
+class "RepositorioUsuario" <<repository>> {
+  + buscarPorNombre(nombreUsuario: String): Usuario
+}
+
+class "RepositorioConfiguracion" <<repository>> {
+  + guardarProducto(producto: Producto): void
+  + guardarMesa(mesa: Mesa): void
+  + guardarPromocion(promocion: Promocion): void
+}
+
+PantallaLogin --> ControlAutenticacion : solicita acceso
+PantallaPedidoTelefonico --> ControlPedidoTelefonico : solicita registro
+PantallaEstadoPedido --> ControlConsultaEstado : solicita estado
+PantallaAdministracion --> ControlConfiguracion : solicita cambios
+PantallaPedido --> ControlPedido : solicita registro
+PantallaMenuDigital --> ControlPedidoQR : solicita menú y registro
+PantallaCocina --> ControlPreparacion : solicita cambio de estado
+PantallaCaja --> ControlCobro : solicita cobro
+
+ControlAutenticacion --> RepositorioUsuario : consulta
+ControlAutenticacion ..> Usuario : valida
+ControlPedidoTelefonico --> Pedido : crea
+ControlPedidoTelefonico --> RepositorioPedido : guarda
+ControlPedidoTelefonico ..> Producto : consulta
+ControlPedidoTelefonico ..> PantallaCocina : notifica
+ControlConsultaEstado ..> Mesa : identifica
+ControlConsultaEstado --> RepositorioPedido : consulta
+ControlConfiguracion --> RepositorioConfiguracion : guarda
+ControlConfiguracion --> RepositorioPedido : consulta reportes
+ControlConfiguracion ..> Producto : actualiza
+ControlConfiguracion ..> Mesa : asigna QR
+ControlConfiguracion ..> Promocion : registra
+ControlPedido --> Pedido : crea
+ControlPedido --> RepositorioPedido : guarda
+ControlPedidoQR --> Pedido : crea
+ControlPedidoQR --> RepositorioPedido : guarda
+ControlPreparacion --> Pedido : actualiza estado
+ControlPreparacion --> RepositorioPedido : consulta y actualiza
+ControlCobro --> Pedido : registra pago
+ControlCobro --> RepositorioPedido : consulta y actualiza
+
+ControlPedido ..> Mesa : verifica
+ControlPedido ..> Producto : consulta
+ControlPedido ..> PantallaCocina : notifica
+ControlPedidoQR ..> Mesa : identifica
+ControlPedidoQR ..> Producto : consulta
+ControlPedidoQR ..> PantallaCocina : notifica
+ControlCobro ..> Mesa : verifica
+
+RepositorioPedido o-- "0..*" Pedido : almacena
+RepositorioUsuario o-- "0..*" Usuario : almacena
+RepositorioConfiguracion o-- "0..*" Producto : almacena
+RepositorioConfiguracion o-- "0..*" Mesa : almacena
+RepositorioConfiguracion o-- "0..*" Promocion : almacena
+Pedido --> "0..1" Mesa : se asocia a
+Pedido --> "1..*" Producto : contiene
+@enduml

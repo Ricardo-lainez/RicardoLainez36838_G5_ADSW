@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+actor "Mesero" as Mesero
+actor "Operador de llamadas" as Operador
+actor "Cliente" as Cliente
+actor "Cocinero" as Cocinero
+actor "Cajero" as Cajero
+actor "Administrador" as Admin
+rectangle "Sistema de Gestión de Pedidos Bocatto" {
+usecase "Autenticar en el sistema" as UC0
+usecase "Tomar pedido en mesa" as UC1
+usecase "Tomar pedido telefónico" as UC2
+usecase "Realizar pedido por QR" as UC3
+usecase "Gestionar preparación del pedido" as UC4
+usecase "Cobrar pedido en la caja" as UC5
+usecase "Consultar estado de pedido" as UC6
+usecase "Administrar configuración del sistema" as UC7
+}
+Mesero --> UC0
+Operador --> UC0
+Cocinero --> UC0
+Cajero --> UC0
+Admin --> UC0
+Mesero --> UC1
+Operador --> UC2
+Cliente --> UC3
+Cliente --> UC6
+Cocinero --> UC4
+Cajero --> UC5
+Admin --> UC7
+@enduml
