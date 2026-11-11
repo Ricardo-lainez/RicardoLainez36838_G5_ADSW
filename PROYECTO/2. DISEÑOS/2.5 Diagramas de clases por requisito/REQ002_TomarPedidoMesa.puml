@@ -5,7 +5,6 @@ Requisito: REQ002 (RF-02 de la ERS) - Tomar pedido en mesa
 Caso de uso: CU 0-1 (Guía 1 y Guía 2)
 Historia de usuario: REQ002 en MTZHU_G5_V1.xlsx
 Jira: SCRUM-14 (Sprint 1)
-Modelo de lenguaje usado: Claude (Anthropic), 11 de noviembre de 2026
 
 Prompt: Actúa como un Analista de Software y Diseñador UML. Con base en el siguiente requisito atómico, genera el código PlantUML correspondiente a un Diagrama de Clases que modele la ontología básica de esta funcionalidad (frontera, controlador, entidades y persistencia desacoplada). Usa los nombres de las clases de análisis de la Guía 2 del proyecto Bocatto: PantallaPedido, ControlPedido, Pedido, Mesa, Producto, RepositorioPedido.
 
