@@ -7,15 +7,8 @@ skinparam class {
   BorderColor #3B2A20
   HeaderBackgroundColor #FDEBDD
 }
-title Modelo de datos propuesto - Sistema de Gestión de Pedidos Bocatto
+title Modelo de datos propuesto - Sistema Bocatto (RF002, RF004, RF005 y RF006)
 
-entity "USUARIO" as usuario {
-  * id_usuario : INT <<PK>>
-  --
-  * nombre_usuario : VARCHAR(50)
-  * contrasena_hash : VARCHAR(255)
-  * rol : VARCHAR(20)
-}
 entity "MESA" as mesa {
   * numero_mesa : INT <<PK>>
   --
@@ -37,11 +30,8 @@ entity "PROMOCION" as promocion {
 entity "PEDIDO" as pedido {
   * id_pedido : INT <<PK>>
   --
-  numero_mesa : INT <<FK>>
-  id_usuario : INT <<FK>>
+  * numero_mesa : INT <<FK>>
   * canal : VARCHAR(10)
-  datos_cliente : VARCHAR(150)
-  datos_entrega : VARCHAR(200)
   observaciones : VARCHAR(250)
   * estado : VARCHAR(25)
   metodo_pago : VARCHAR(25)
@@ -55,12 +45,11 @@ entity "DETALLE_PEDIDO" as detalle {
   * cantidad : INT
   * precio_unitario : DECIMAL(8,2)
 }
-mesa |o..o{ pedido : "tiene"
-usuario |o..o{ pedido : "registra"
+mesa ||..o{ pedido : "tiene"
 pedido ||..|{ detalle : "contiene"
 producto ||..o{ detalle : "se pide en"
 note bottom of pedido
-canal: mesa, telefono o qr
+canal: mesa o qr
 estado: pendiente, en preparacion, listo,
 listo para entregar, pagado
 end note
