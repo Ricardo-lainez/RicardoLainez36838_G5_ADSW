@@ -10,3 +10,4 @@
 | 1.5 Backlog | Plantilla de backlog y sprints con tareas, responsables y estimaciones |
 | 1.6 Pruebas Unitarias | Pruebas unitarias (fase de construcción) |
 | 1.7 Reporte de errores | Reporte de errores (fase de construcción) |
+| 1.8 Archivos de Respaldo | Fichas de trazabilidad y archivos de respaldo con el prompt de cada diagrama de clases |

@@ -1,0 +1,77 @@
+@startuml
+/'
+METADATOS DE TRAZABILIDAD
+Requisito: REQ004 (RF-04 de la ERS) - Realizar pedido por QR
+Caso de uso: CU 0-3 (Guía 1 y Guía 2)
+Historia de usuario: REQ004 en MTZHU_G5_V1.xlsx
+Jira: SCRUM-19 (Sprint 2)
+Modelo de lenguaje usado: Claude (Anthropic), 11 de noviembre de 2026
+
+Prompt: Actúa como un Analista de Software y Diseñador UML. Con base en el siguiente requisito atómico, genera el código PlantUML correspondiente a un Diagrama de Clases que modele la ontología básica de esta funcionalidad (frontera, controlador, entidades y persistencia desacoplada). Usa los nombres de las clases de análisis de la Guía 2 del proyecto Bocatto: PantallaMenuDigital, ControlPedidoQR, Pedido, Mesa, Producto, Promocion, RepositorioPedido.
+
+Requisito Atómico: "El sistema de gestión de pedidos Bocatto deberá permitir al Cliente escanear el código QR de su mesa, ver el menú digital con precios y promociones vigentes, elegir productos y cantidades y confirmar el pedido, que queda en estado pendiente y se envía a cocina."
+'/
+title Diagrama de clases REQ004 - Realizar pedido por QR
+allowmixing
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #3B2A20
+  HeaderBackgroundColor #FDEBDD
+}
+actor Cliente
+class "PantallaMenuDigital" <<boundary>> {
+  - codigoQR: String
+  + escanearQR(codigoQR: String)
+  + mostrarMenu(productos: List<Producto>)
+  + seleccionarProducto(producto: Producto, cantidad: int)
+  + clickConfirmarPedido()
+  + mostrarMensaje(mensaje: String)
+}
+class "ControlPedidoQR" <<control>> {
+  + obtenerMenu(codigoQR: String): List<Producto>
+  + registrarPedidoQR(codigoQR: String, productos: List<Producto>, cantidades: List<int>, observaciones: String): Resultado
+  + validarPedido(productos: List<Producto>): boolean
+}
+class "Mesa" <<entity>> {
+  - numero: int
+  - codigoQR: String
+  + getNumero(): int
+  + getCodigoQR(): String
+}
+class "Producto" <<entity>> {
+  - id: String
+  - nombre: String
+  - precio: double
+  - disponible: boolean
+  + estaDisponible(): boolean
+  + getPrecio(): double
+}
+class "Promocion" <<entity>> {
+  - id: String
+  - descripcion: String
+  - vigente: boolean
+}
+class "Pedido" <<entity>> {
+  - id: String
+  - numeroMesa: int
+  - productos: List<Producto>
+  - cantidades: List<int>
+  - estado: String
+  + Pedido(numeroMesa: int, productos: List<Producto>, cantidades: List<int>, observaciones: String)
+}
+class "RepositorioPedido" <<repository>> {
+  + guardar(pedido: Pedido): void
+}
+Cliente --> PantallaMenuDigital : usa
+PantallaMenuDigital --> ControlPedidoQR : envía selección
+ControlPedidoQR ..> Mesa : identifica por QR
+ControlPedidoQR ..> Producto : arma el menú
+ControlPedidoQR ..> Promocion : muestra vigentes
+ControlPedidoQR --> Pedido : crea
+ControlPedidoQR --> RepositorioPedido : guarda
+Pedido "1" o-- "1..*" Producto : contiene
+Mesa "1" -- "0..*" Pedido : tiene
+note bottom of Pedido : estado inicial = pendiente
+@enduml

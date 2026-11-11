@@ -1,0 +1,61 @@
+@startuml
+/'
+METADATOS DE TRAZABILIDAD
+Requisito: REQ006 (RF-06 de la ERS) - Cobrar pedido en la caja
+Caso de uso: CU 0-5 (Guía 1 y Guía 2)
+Historia de usuario: REQ006 en MTZHU_G5_V1.xlsx
+Jira: SCRUM-31 (Sprint 4)
+Modelo de lenguaje usado: Claude (Anthropic), 11 de noviembre de 2026
+
+Prompt: Actúa como un Analista de Software y Diseñador UML. Con base en el siguiente requisito atómico, genera el código PlantUML correspondiente a un Diagrama de Clases que modele la ontología básica de esta funcionalidad (frontera, controlador, entidades y persistencia desacoplada). Usa los nombres de las clases de análisis de la Guía 2 del proyecto Bocatto: PantallaCaja, ControlCobro, Pedido, Mesa, RepositorioPedido.
+
+Requisito Atómico: "El sistema de gestión de pedidos Bocatto deberá permitir al Cajero buscar el pedido de una mesa por su número, verificar el detalle y el total, y registrar el método de pago (efectivo o digital/transferencia) solo si el pedido está listo, dejándolo en estado pagado."
+'/
+title Diagrama de clases REQ006 - Cobrar pedido en la caja
+allowmixing
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #3B2A20
+  HeaderBackgroundColor #FDEBDD
+}
+actor Cajero
+class "PantallaCaja" <<boundary>> {
+  - numeroMesa: int
+  + buscarPorMesa(numeroMesa: int)
+  + mostrarDetalle(pedido: Pedido)
+  + seleccionarMetodoPago(metodoPago: String)
+  + clickRegistrarPago()
+  + mostrarMensaje(mensaje: String)
+}
+class "ControlCobro" <<control>> {
+  + buscarPedidoPorMesa(numeroMesa: int): Pedido
+  + registrarPago(idPedido: String, metodoPago: String): Resultado
+  + validarPedidoListo(pedido: Pedido): boolean
+}
+class "Pedido" <<entity>> {
+  - id: String
+  - numeroMesa: int
+  - estado: String
+  - metodoPago: String
+  - total: double
+  + calcularTotal(): double
+  + registrarPago(metodoPago: String): void
+  + getEstado(): String
+}
+class "Mesa" <<entity>> {
+  - numero: int
+  + getNumero(): int
+}
+class "RepositorioPedido" <<repository>> {
+  + buscarPorMesa(numeroMesa: int): Pedido
+  + actualizar(pedido: Pedido): void
+}
+Cajero --> PantallaCaja : usa
+PantallaCaja --> ControlCobro : busca y cobra
+ControlCobro --> RepositorioPedido : busca y actualiza
+ControlCobro --> Pedido : registra pago
+Mesa "1" -- "0..*" Pedido : tiene
+note bottom of Pedido : solo se cobra si estado = listo;\ndespués queda pagado
+@enduml

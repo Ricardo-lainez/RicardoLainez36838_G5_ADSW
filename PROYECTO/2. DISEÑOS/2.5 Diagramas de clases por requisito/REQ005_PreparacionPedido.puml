@@ -1,0 +1,54 @@
+@startuml
+/'
+METADATOS DE TRAZABILIDAD
+Requisito: REQ005 (RF-05 de la ERS) - Gestionar preparación del pedido
+Caso de uso: CU 0-4 (Guía 1 y Guía 2)
+Historia de usuario: REQ005 en MTZHU_G5_V1.xlsx
+Jira: SCRUM-27 (Sprint 3)
+Modelo de lenguaje usado: Claude (Anthropic), 11 de noviembre de 2026
+
+Prompt: Actúa como un Analista de Software y Diseñador UML. Con base en el siguiente requisito atómico, genera el código PlantUML correspondiente a un Diagrama de Clases que modele la ontología básica de esta funcionalidad (frontera, controlador, entidades y persistencia desacoplada). Usa los nombres de las clases de análisis de la Guía 2 del proyecto Bocatto: PantallaCocina, ControlPreparacion, Pedido, RepositorioPedido.
+
+Requisito Atómico: "El sistema de gestión de pedidos Bocatto deberá permitir al Cocinero ver los pedidos pendientes y cambiar su estado solo en la secuencia pendiente, en preparación, listo y listo para entregar, reflejando el nuevo estado para el personal y el cliente."
+'/
+title Diagrama de clases REQ005 - Gestionar preparación del pedido
+allowmixing
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #3B2A20
+  HeaderBackgroundColor #FDEBDD
+}
+actor Cocinero
+class "PantallaCocina" <<boundary>> {
+  + mostrarPendientes(pedidos: List<Pedido>)
+  + seleccionarPedido(idPedido: String)
+  + clickCambiarEstado(nuevoEstado: String)
+  + notificarNuevoPedido(pedido: Pedido)
+  + mostrarMensaje(mensaje: String)
+}
+class "ControlPreparacion" <<control>> {
+  + listarPendientes(): List<Pedido>
+  + cambiarEstado(idPedido: String, nuevoEstado: String): Resultado
+  + validarSecuencia(estadoActual: String, nuevoEstado: String): boolean
+}
+class "Pedido" <<entity>> {
+  - id: String
+  - numeroMesa: int
+  - estado: String
+  + cambiarEstado(nuevoEstado: String): void
+  + getEstado(): String
+}
+class "RepositorioPedido" <<repository>> {
+  + listarPendientes(): List<Pedido>
+  + buscarPorId(idPedido: String): Pedido
+  + actualizar(pedido: Pedido): void
+}
+Cocinero --> PantallaCocina : usa
+PantallaCocina --> ControlPreparacion : solicita cambio
+ControlPreparacion --> RepositorioPedido : consulta y actualiza
+ControlPreparacion --> Pedido : cambia estado
+RepositorioPedido "1" o-- "0..*" Pedido : almacena
+note right of ControlPreparacion : secuencia válida: pendiente,\nen preparación, listo,\nlisto para entregar
+@enduml

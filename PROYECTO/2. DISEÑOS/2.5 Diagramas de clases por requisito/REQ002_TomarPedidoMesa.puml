@@ -1,0 +1,72 @@
+@startuml
+/'
+METADATOS DE TRAZABILIDAD
+Requisito: REQ002 (RF-02 de la ERS) - Tomar pedido en mesa
+Caso de uso: CU 0-1 (Guía 1 y Guía 2)
+Historia de usuario: REQ002 en MTZHU_G5_V1.xlsx
+Jira: SCRUM-14 (Sprint 1)
+Modelo de lenguaje usado: Claude (Anthropic), 11 de noviembre de 2026
+
+Prompt: Actúa como un Analista de Software y Diseñador UML. Con base en el siguiente requisito atómico, genera el código PlantUML correspondiente a un Diagrama de Clases que modele la ontología básica de esta funcionalidad (frontera, controlador, entidades y persistencia desacoplada). Usa los nombres de las clases de análisis de la Guía 2 del proyecto Bocatto: PantallaPedido, ControlPedido, Pedido, Mesa, Producto, RepositorioPedido.
+
+Requisito Atómico: "El sistema de gestión de pedidos Bocatto deberá permitir al Mesero registrar el pedido de una mesa numerada con sus productos, cantidades y observaciones, validar que tenga al menos un producto, generar su identificador y dejarlo en estado pendiente para que lo vea cocina."
+'/
+title Diagrama de clases REQ002 - Tomar pedido en mesa
+allowmixing
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #3B2A20
+  HeaderBackgroundColor #FDEBDD
+}
+actor Mesero
+class "PantallaPedido" <<boundary>> {
+  - numeroMesa: int
+  - productosSeleccionados: List<Producto>
+  - observaciones: String
+  + seleccionarMesa(numeroMesa: int)
+  + agregarProducto(producto: Producto, cantidad: int)
+  + clickRegistrarPedido()
+  + mostrarMensaje(mensaje: String)
+}
+class "ControlPedido" <<control>> {
+  + registrarPedido(numeroMesa: int, productos: List<Producto>, cantidades: List<int>, observaciones: String): Resultado
+  + validarPedido(productos: List<Producto>): boolean
+}
+class "Pedido" <<entity>> {
+  - id: String
+  - numeroMesa: int
+  - productos: List<Producto>
+  - cantidades: List<int>
+  - observaciones: String
+  - estado: String
+  + Pedido(numeroMesa: int, productos: List<Producto>, cantidades: List<int>, observaciones: String)
+  + getEstado(): String
+}
+class "Mesa" <<entity>> {
+  - numero: int
+  - codigoQR: String
+  + validarNumero(numero: int): boolean
+}
+class "Producto" <<entity>> {
+  - id: String
+  - nombre: String
+  - precio: double
+  - disponible: boolean
+  + estaDisponible(): boolean
+}
+class "RepositorioPedido" <<repository>> {
+  + guardar(pedido: Pedido): void
+  + buscarPorId(idPedido: String): Pedido
+}
+Mesero --> PantallaPedido : usa
+PantallaPedido --> ControlPedido : envía datos
+ControlPedido ..> Mesa : valida número
+ControlPedido ..> Producto : verifica disponibilidad
+ControlPedido --> Pedido : crea
+ControlPedido --> RepositorioPedido : guarda
+Pedido "1" o-- "1..*" Producto : contiene
+Mesa "1" -- "0..*" Pedido : tiene
+note bottom of Pedido : estado inicial = pendiente
+@enduml

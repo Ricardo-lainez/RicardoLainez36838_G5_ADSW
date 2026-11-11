@@ -6,5 +6,6 @@
 | 2.2 Clases de analisis y secuencias | Guía 2 con clases de análisis y un diagrama de secuencia por cada caso de uso |
 | 2.3 Mockups | Maquetas de las pantallas de los requisitos planificados en Jira y modelo de datos propuesto |
 | 2.4 Piezas visuales | Logotipo de Bocatto y su versión animada |
+| 2.5 Diagramas de clases por requisito | Diagrama de clases de RF002, RF004, RF005 y RF006 generado con prompt y metadatos de trazabilidad |
 
 El maquetado de cada requisito también está en Confluence: https://36838-g5.atlassian.net/wiki/spaces/3/pages/327682
