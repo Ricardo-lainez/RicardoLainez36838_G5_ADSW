@@ -103,63 +103,67 @@ colorlinks=true, linkcolor=blue, urlcolor=blue,linkbordercolor=blue, urlborderco
 
 \section{Introducción}
 
-Este informe resume cómo el Grupo 5 planificó el sistema de gestión de pedidos Bocatto y cómo se mantiene la trazabilidad de cada requisito. La planificación toma los 4 casos de uso de nivel 0 que se trabajaron en la Guía 1 y la Guía 2: tomar pedido en mesa, realizar pedido por QR, gestionar la preparación y cobrar en caja. Las guías del repositorio sí incluyen los 8 casos de uso.
+Este informe resume cómo el Grupo 5 planificó el sistema de gestión de pedidos Bocatto y cómo se mantiene la trazabilidad de cada requisito. La planificación cubre los 8 requisitos funcionales de la ERS, con un sprint por requisito. Los sprints 1 a 4 corresponden a los casos de uso de nivel 0 trabajados en la Guía 1 y la Guía 2 (tomar pedido en mesa, realizar pedido por QR, gestionar la preparación y cobrar en caja) y están terminados. Los sprints 5 a 8 están planificados, de una semana cada uno, hasta el 15 de diciembre de 2026.
 
-\textbf{Objetivo:} documentar la trazabilidad de los requisitos RF-02, RF-04, RF-05 y RF-06 desde la ERS hasta su historia de usuario, sus tareas en Jira, su pantalla en Confluence y su diagrama de clases generado con un prompt de ingeniería, indicando dónde se encuentra cada evidencia.
+\textbf{Objetivo:} planificar los 8 requisitos y documentar la trazabilidad de los requisitos terminados (RF-02, RF-04, RF-05 y RF-06) desde la ERS hasta su historia de usuario, sus tareas en Jira, su pantalla en Confluence y su diagrama de clases generado con un prompt de ingeniería, indicando dónde se encuentra cada evidencia.
 
 \section{Desarrollo}
 
 \subsection{Historias de usuario (matriz MTZHU)}
 
-Las historias se llenaron en la plantilla de la asignatura \texttt{MTZHU\_G5\_V1.xlsx}. La hoja \textit{Formato descripción HU} recoge, por cada ítem, el problema, la necesidad, la solución, el usuario, las tareas, el responsable, las horas, la fecha de entrega, la prioridad, el estado, la prueba de aceptación y los comentarios. Cada historia tiene además su ficha en una hoja aparte (Figura \ref{fig:mtzhu}).
+Las historias de los 8 requisitos se llenaron en la plantilla de la asignatura \texttt{MTZHU\_G5\_V1.1.xlsx}. La hoja \textit{Formato descripción HU} recoge, por cada ítem, el problema, la necesidad, la solución, el usuario, las tareas, el responsable, las horas, la fecha de entrega, la prioridad, el estado, la prueba y los comentarios. La prueba indica cómo se verifica la historia y su flujo alterno, es decir, qué pasa si no se cumple. Cada historia tiene además su ficha en una hoja aparte (Figura \ref{fig:mtzhu}).
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.8\textwidth]{mtzhu_matriz.png}
-  \caption{Matriz de marco de trabajo de historias de usuario con los 4 requisitos.}
+  \includegraphics[width=0.56\textwidth]{mtzhu_ficha_REQ002.png}
+  \caption{Ficha de la historia REQ002 en la matriz MTZHU V1.1, con la prueba y su flujo alterno.}
   \label{fig:mtzhu}
 \end{figure}
 
 \subsection{Backlog y sprints}
 
-El backlog (\texttt{G5\_Backlog\_PlantillaV1.xlsx}) tiene una historia por requisito con sus tareas \texttt{REQ00X-N}. Se definió un sprint por caso de uso. Los cuatro están cerrados y el último terminó el 12 de noviembre a las 09:00.
+El backlog (\texttt{G5\_Backlog\_PlantillaV1.1.xlsx}) tiene una historia por requisito con sus subtareas \texttt{REQ00X-N}. Cada subtarea describe lo que el programador implementa, por ejemplo \textit{Diseño e implementación de la pantalla de toma de pedido con selección de mesa}. El cronograma \texttt{G5\_Cronograma\_Sprints\_V1.1.xlsx} reparte las subtareas por semana con su responsable y sus horas (Tabla \ref{tab:sprints}).
 
 \begin{table}[H]
 \centering
-\small
-\begin{tabular}{|l|l|l|l|l|c|}
+\footnotesize
+\begin{tabular}{|l|l|l|l|l|c|l|}
 \hline
-\textbf{Sprint} & \textbf{Fecha} & \textbf{Requisito} & \textbf{Caso de uso} & \textbf{Encargado} & \textbf{Horas} \\ \hline
-Sprint 1 & 8 nov & RF002 Tomar pedido en mesa & CU 0-1 & Marco Padilla & 6 \\ \hline
-Sprint 2 & 9 nov & RF004 Realizar pedido por QR & CU 0-3 & Marco Padilla & 6 \\ \hline
-Sprint 3 & 10 nov & RF005 Gestionar preparación & CU 0-4 & Ricardo Laínez & 5 \\ \hline
-Sprint 4 & 11 al 12 nov & RF006 Cobrar pedido en caja & CU 0-5 & Nelson Andino & 5 \\ \hline
+\textbf{Sprint} & \textbf{Fechas} & \textbf{Requisito} & \textbf{CU} & \textbf{Encargado} & \textbf{Horas} & \textbf{Estado} \\ \hline
+Sprint 1 & 8--10 nov & RF002 Tomar pedido en mesa & CU 0-1 & Marco Padilla & 10 & Terminado \\ \hline
+Sprint 2 & 10--12 nov & RF004 Realizar pedido por QR & CU 0-3 & Marco Padilla & 8 & Terminado \\ \hline
+Sprint 3 & 12--14 nov & RF005 Gestionar preparación & CU 0-4 & Ricardo Laínez & 8 & Terminado \\ \hline
+Sprint 4 & 14--17 nov & RF006 Cobrar pedido en caja & CU 0-5 & Nelson Andino & 8 & Terminado \\ \hline
+Sprint 5 & 18--24 nov & RF001 Autenticar en el sistema & CU 0-0 & Marco Padilla & 12 & Planificado \\ \hline
+Sprint 6 & 25 nov--1 dic & RF003 Tomar pedido telefónico & CU 0-2 & Ricardo Laínez & 11 & Planificado \\ \hline
+Sprint 7 & 2--8 dic & RF008 Administrar configuración & CU 0-7 & Ricardo Laínez & 13 & Planificado \\ \hline
+Sprint 8 & 9--15 dic & RF007 Consultar estado de pedido & CU 0-6 & Nelson Andino & 9 & Planificado \\ \hline
 \end{tabular}
-\caption{Sprints, requisitos y encargados. Las subtareas suman 9 h para Marco Padilla, 7 h para Ricardo Laínez y 6 h para Nelson Andino.}
+\caption{Sprints, requisitos y encargados. Las subtareas suman 79 h: 30 h de Marco Padilla, 26 h de Ricardo Laínez y 23 h de Nelson Andino.}
 \label{tab:sprints}
 \end{table}
 
 \subsection{Jira}
 
-En el proyecto Scrum \textbf{36838\_G5} cada sprint es una épica que agrupa su historia. Cada historia lleva el requisito en el nombre y, en la descripción, la historia de usuario, el problema, el caso de uso, la prueba de aceptación, las tareas y la trazabilidad. Sus subtareas tienen responsable y horas, y enlaza a Confluence, al archivo de respaldo y al diagrama de clases.
+En el proyecto Scrum \textbf{36838\_G5} cada sprint es una épica que agrupa su historia. Cada historia lleva el requisito en el nombre y, en una descripción corta, la historia de usuario, el caso de uso, la prioridad, el criterio de aceptación, el flujo alterno y la trazabilidad. Sus subtareas tienen responsable y horas. Los sprints 1 a 4 están cerrados con sus historias finalizadas y los sprints 5 a 8 están creados como sprints futuros.
 
 \begin{figure}[!htb]
   \centering
   \begin{minipage}{0.49\textwidth}
     \centering
-    \includegraphics[height=4cm]{jira_cronograma_4CU.png}
+    \includegraphics[width=\textwidth,height=3.6cm,keepaspectratio]{jira_cronograma_8RF.png}
   \end{minipage}\hfill
   \begin{minipage}{0.49\textwidth}
     \centering
-    \includegraphics[height=4cm]{jira_historia_RF002.png}
+    \includegraphics[width=\textwidth,height=3.6cm,keepaspectratio]{jira_historia_RF002.png}
   \end{minipage}
-  \caption{Cronograma de Jira con los 4 sprints (izquierda) e historia SCRUM-14 con su descripción (derecha).}
+  \caption{Cronograma de Jira con las 8 épicas (izquierda) e historia SCRUM-14 con su descripción (derecha).}
   \label{fig:jira}
 \end{figure}
 
 \subsection{Confluence}
 
-En el espacio 36838\_G5, la página \textit{Maquetado del sistema Bocatto por requisito} tiene una subpágina por requisito y otra con el modelo de datos. Cada subpágina muestra la historia de usuario, el sprint y el encargado, el enlace a Jira, la trazabilidad, la prueba de aceptación, el mockup de la pantalla, el diagrama de clases, los datos que usa y las reglas de negocio (Figura \ref{fig:conf}, izquierda).
+En el espacio 36838\_G5, la página \textit{Maquetado del sistema Bocatto por requisito} tiene una subpágina por requisito y otra con el modelo de datos. Cada subpágina muestra la historia de usuario, el sprint y el encargado, el enlace a Jira, la trazabilidad, la prueba de aceptación, el flujo alterno, el mockup de la pantalla, el diagrama de clases, los datos que usa y las reglas de negocio (Figura \ref{fig:conf}, izquierda).
 
 
 
@@ -182,11 +186,11 @@ Requisito Atómico: "El sistema Bocatto deberá permitir al Mesero registrar el 
   \centering
   \begin{minipage}{0.52\textwidth}
     \centering
-    \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{confluence_rf002.png}
+    \includegraphics[width=\textwidth,height=3.4cm,keepaspectratio]{confluence_rf002.png}
   \end{minipage}\hfill
   \begin{minipage}{0.44\textwidth}
     \centering
-    \includegraphics[height=5.2cm]{REQ002_TomarPedidoMesa.png}
+    \includegraphics[height=3.5cm]{REQ002_TomarPedidoMesa.png}
   \end{minipage}
   \caption{Página de Confluence de RF002 con su trazabilidad (izquierda) y diagrama de clases de REQ002 generado a partir del prompt (derecha).}
   \label{fig:conf}
@@ -196,17 +200,17 @@ La ficha de trazabilidad de cada requisito está en el README de \texttt{1.8 Arc
 
 \subsection{Dónde está cada evidencia}
 
-El repositorio se organizó en la carpeta \texttt{PROYECTO}, con \texttt{1. ELICITACION}, \texttt{2. DISEÑOS} y \texttt{3. CODIGO}. En Notion, la sección \textit{SPRINTS - JIRA} del espacio P.A.R.A. tiene un enlace por sprint, y la pestaña \textit{Archivos} guarda cada documento con su archivo original y su enlace a GitHub (Figura \ref{fig:donde}).
+El repositorio se organizó en la carpeta \texttt{PROYECTO}, con \texttt{1. ELICITACION}, \texttt{2. DISEÑOS} y \texttt{3. CODIGO}. En Notion, la sección \textit{SPRINTS - JIRA} del espacio P.A.R.A. tiene la tabla de los 8 sprints con un enlace por sprint, y la pestaña \textit{Archivos} guarda cada documento con su archivo original y su enlace a GitHub (Figura \ref{fig:donde}).
 
 \begin{figure}[!htb]
   \centering
   \begin{minipage}{0.52\textwidth}
     \centering
-    \includegraphics[width=\textwidth,height=3.7cm,keepaspectratio]{github_proyecto.png}
+    \includegraphics[width=\textwidth,height=2.6cm,keepaspectratio]{github_proyecto.png}
   \end{minipage}\hfill
   \begin{minipage}{0.40\textwidth}
     \centering
-    \includegraphics[width=\textwidth,height=3.7cm,keepaspectratio]{notion_sprints.png}
+    \includegraphics[width=\textwidth,height=2.6cm,keepaspectratio]{notion_sprints.png}
   \end{minipage}
   \caption{Carpeta de elicitación en GitHub (izquierda) y sección SPRINTS - JIRA en Notion (derecha).}
   \label{fig:donde}
@@ -229,13 +233,13 @@ Guías, mockups y modelo & \href{https://github.com/Ricardo-lainez/RicardoLainez
 Jira (tablero) & \href{https://36838-g5.atlassian.net/jira/software/projects/SCRUM/boards/1}{36838-g5.atlassian.net/jira/software/projects/SCRUM/boards/1} \\ \hline
 Confluence & \url{https://36838-g5.atlassian.net/wiki/spaces/3/pages/327682} \\ \hline
 Notion (P.A.R.A.) & \url{https://www.notion.so/3f3cd8194c458048b3adf5c09e2195b6} \\ \hline
-NotebookLM & \href{https://notebook.google.com/notebook/eca2758b-8588-4cd0-880c-3fe946384210}{Cuaderno 1: requisitos} y \href{https://notebook.google.com/notebook/4b712b5f-10af-4a7b-b4a4-caa0dd275495}{Cuaderno 2: modelado UML} \\ \hline
+NotebookLM & \href{https://notebook.google.com/notebook/eca2758b-8588-4cd0-880c-3fe946384210}{Cuaderno del proyecto (18 fuentes)} \\ \hline
 Gem Tutor Bocatto & \url{https://gemini.google.com/gem/d9eeb390f7c5?usp=sharing} \\ \hline
 \end{longtable}
 }
 
 \section{Conclusiones}
 
-Cada requisito se sigue sin saltos desde la ERS hasta su historia, sus tareas en Jira, su pantalla y su diagrama de clases. Guardar el prompt dentro del código PlantUML deja registrado cómo se obtuvo cada modelo.
+Los 4 requisitos terminados se siguen sin saltos desde la ERS hasta su diagrama de clases, y los otros 4 ya tienen historia, subtareas y sprint hasta el 15 de diciembre. El prompt dentro del código PlantUML deja registrado cómo se obtuvo cada modelo.
 
 \end{document}
