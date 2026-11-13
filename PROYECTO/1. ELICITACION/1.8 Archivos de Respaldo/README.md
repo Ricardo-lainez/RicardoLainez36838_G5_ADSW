@@ -1,6 +1,6 @@
 # 1.8 Archivos de Respaldo
 
-Fichas de trazabilidad y modelado de los 4 requisitos planificados en Jira. Para cada requisito se usó un modelo de lenguaje con un prompt de ingeniería que genera el código PlantUML de su diagrama de clases. El prompt original va dentro del código como comentario de metadatos (`/' ... '/`), para que el modelo quede ligado a su requisito.
+Fichas de trazabilidad y modelado de los 4 requisitos terminados en los sprints 1 a 4. Para cada requisito se usó un modelo de lenguaje con un prompt de ingeniería que genera el código PlantUML de su diagrama de clases. El prompt original va dentro del código como comentario de metadatos (`/' ... '/`), para que el modelo quede ligado a su requisito.
 
 ## Especificación de los requisitos usados
 

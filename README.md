@@ -20,16 +20,20 @@ Repositorio del Grupo 5 de Análisis y Diseño de Software (NRC 36838, ESPE). Pr
 | Informe final | Informes y presentaciones del proyecto |
 | KANBAN | Evidencias del tablero y los sprints en Jira |
 
-## Planificación actual
+## Planificación
 
-Los sprints en Jira trabajan los 4 casos de uso de nivel 0 de la Guía 1 y la Guía 2, para mostrar la trazabilidad desde el requisito hasta su historia de usuario, sus tareas y su pantalla:
+Cada sprint trabaja un requisito funcional. Los sprints 1 a 4 corresponden a los 4 casos de uso de nivel 0 desarrollados en la Guía 1 y la Guía 2 y están terminados. Los sprints 5 a 8 están planificados hasta el 15 de diciembre de 2026.
 
-| Sprint | Fecha | Requisito |
-|---|---|---|
-| Sprint 1 | 8 de noviembre | RF002 Tomar pedido en mesa |
-| Sprint 2 | 9 de noviembre | RF004 Realizar pedido por QR |
-| Sprint 3 | 10 de noviembre | RF005 Gestionar preparación del pedido |
-| Sprint 4 | 11 de noviembre al 12 de noviembre (09:00) | RF006 Cobrar pedido en la caja |
+| Sprint | Fechas | Requisito | Estado |
+|---|---|---|---|
+| Sprint 1 | 8 de noviembre al 10 de noviembre | RF002 Tomar pedido en mesa | Terminado |
+| Sprint 2 | 10 de noviembre al 12 de noviembre | RF004 Realizar pedido por QR | Terminado |
+| Sprint 3 | 12 de noviembre al 14 de noviembre | RF005 Gestionar preparación del pedido | Terminado |
+| Sprint 4 | 14 de noviembre al 17 de noviembre | RF006 Cobrar pedido en la caja | Terminado |
+| Sprint 5 | 18 de noviembre al 24 de noviembre | RF001 Autenticar en el sistema | En proceso |
+| Sprint 6 | 25 de noviembre al 1 de diciembre | RF003 Tomar pedido telefónico | En proceso |
+| Sprint 7 | 2 de diciembre al 8 de diciembre | RF008 Administrar configuración del sistema | En proceso |
+| Sprint 8 | 9 de diciembre al 15 de diciembre | RF007 Consultar estado de pedido | En proceso |
 
 ## Enlaces
 

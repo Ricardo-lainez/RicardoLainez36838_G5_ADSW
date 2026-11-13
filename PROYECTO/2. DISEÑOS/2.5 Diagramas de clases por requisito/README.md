@@ -1,6 +1,6 @@
 # 2.5 Diagramas de clases por requisito
 
-Diagrama de clases de análisis de cada requisito planificado en Jira, generado con un prompt de ingeniería. El código fuente (.puml) lleva el prompt original como comentario de metadatos. La ficha de trazabilidad de cada uno está en `PROYECTO/1. ELICITACION/1.8 Archivos de Respaldo`.
+Diagrama de clases de análisis de cada requisito terminado en los sprints 1 a 4, generado con un prompt de ingeniería. El código fuente (.puml) lleva el prompt original como comentario de metadatos. La ficha de trazabilidad de cada uno está en `PROYECTO/1. ELICITACION/1.8 Archivos de Respaldo`.
 
 | Archivo | Requisito |
 |---|---|
