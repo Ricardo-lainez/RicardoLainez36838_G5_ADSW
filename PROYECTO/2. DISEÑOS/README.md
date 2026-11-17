@@ -7,5 +7,6 @@
 | 2.3 Mockups | Maquetas de las pantallas de los 4 requisitos terminados (sprints 1 a 4) y modelo de datos propuesto |
 | 2.4 Piezas visuales | Logotipo de Bocatto y su versión animada |
 | 2.5 Diagramas de clases por requisito | Diagrama de clases de RF002, RF004, RF005 y RF006 generado con prompt y metadatos de trazabilidad |
+| U2T1 | CRUD de estudiantes en tres capas con los patrones de comportamiento Observer, Strategy y Command (Java, consola) |
 
 El maquetado de cada requisito también está en Confluence: https://36838-g5.atlassian.net/wiki/spaces/3/pages/327682
