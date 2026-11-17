@@ -1,0 +1,69 @@
+@startuml
+title U2T1 - Arquitectura MVC para CRUD Estudiante
+
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+package "vista" {
+  class EstudianteVista {
+    - controlador: EstudianteControlador
+    - txtId, txtNombre, txtEdad, txtBuscar: JTextField
+    - tabla: JTable
+    + mostrarLista(lista: List<Estudiante>): void
+    + mostrarMensaje(mensaje: String): void
+    - onRegistrar(): void
+    - onActualizar(): void
+    - onEliminar(): void
+    - onBuscar(): void
+  }
+}
+
+package "controlador" {
+  class EstudianteControlador {
+    - modelo: EstudianteModelo
+    + registrar(id, nombre, edad): String
+    + actualizar(id, nombre, edad): String
+    + eliminar(id): String
+    + listar(): List<Estudiante>
+    + buscarPorId(texto): List<Estudiante>
+    + validarId(id: String): boolean
+    + normalizarId(id: String): String
+  }
+}
+
+package "modelo" {
+  class EstudianteModelo {
+    - estudiantes: List<Estudiante>
+    + guardar(e: Estudiante): void
+    + buscarPorId(id: String): Estudiante
+    + actualizar(id, nombre, edad): void
+    + eliminar(id: String): void
+    + listarTodos(): List<Estudiante>
+    + existeId(id: String): boolean
+  }
+  class Estudiante {
+    - id: String {final, ej. L00434011}
+    - nombre: String
+    - edad: int
+  }
+}
+
+class Main {
+  + main(args: String[]): void
+}
+package "pruebas" {
+  class PruebaCrudEstudiantes {
+    + main(args: String[]): void
+  }
+}
+
+Main ..> EstudianteVista : crea
+Main ..> EstudianteControlador : crea
+Main ..> EstudianteModelo : crea
+EstudianteVista --> EstudianteControlador : pide acciones
+EstudianteControlador --> EstudianteModelo : actualiza / consulta
+EstudianteModelo o--> Estudiante : almacena
+EstudianteVista ..> Estudiante : muestra
+PruebaCrudEstudiantes --> EstudianteControlador : prueba
+@enduml
