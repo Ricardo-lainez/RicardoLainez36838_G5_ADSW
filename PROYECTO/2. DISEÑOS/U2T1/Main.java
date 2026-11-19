@@ -15,6 +15,7 @@ public class Main {
             // Se usa el aspecto por defecto
         }
         SwingUtilities.invokeLater(() -> {
+            // el modelo va dentro del controlador y el controlador dentro de la vista
             EstudianteControlador controlador = new EstudianteControlador(new EstudianteModelo());
             new EstudianteVista(controlador).setVisible(true);
         });

@@ -90,6 +90,7 @@ public class EstudianteVista extends JFrame {
     // ---------------- Acciones: la vista solo delega en el controlador ----------------
 
     private void onRegistrar() {
+        // la vista no valida nada, solo pasa lo que escribio el usuario
         String r = controlador.registrar(txtId.getText(), txtNombre.getText(), txtEdad.getText());
         mostrarMensaje(r);
         if (!esError(r)) limpiar();
@@ -110,7 +111,7 @@ public class EstudianteVista extends JFrame {
             mostrarMensaje("Error: seleccione un estudiante de la tabla para eliminar.");
             return;
         }
-        String r = controlador.eliminar(txtId.getText());
+        String r = controlador.eliminar(txtId.getText());  // el controlador decide si se puede o no
         mostrarMensaje(r);
         if (!esError(r)) limpiar();
         mostrarLista(controlador.listar());
@@ -121,7 +122,7 @@ public class EstudianteVista extends JFrame {
             mostrarLista(controlador.listar());
             return;
         }
-        List<Estudiante> r = controlador.buscarPorId(txtBuscar.getText());
+        List<Estudiante> r = controlador.buscarPorId(txtBuscar.getText());  // busca por ID parcial
         mostrarLista(r);
         lblEstado.setForeground(TEXTO_SUAVE);
         lblEstado.setText("Busqueda por ID '" + txtBuscar.getText().trim() + "': " + r.size() + " resultado(s).");
@@ -149,7 +150,7 @@ public class EstudianteVista extends JFrame {
 
     private void limpiar() {
         txtId.setText("");
-        txtId.setEditable(true);
+        txtId.setEditable(true);  // al limpiar se habilita otra vez para registrar uno nuevo
         txtId.setBackground(TARJETA);
         txtNombre.setText("");
         txtEdad.setText("");
@@ -161,7 +162,7 @@ public class EstudianteVista extends JFrame {
         int fila = tabla.getSelectedRow();
         if (fila < 0) return;
         txtId.setText(String.valueOf(modeloTabla.getValueAt(fila, 0)));
-        txtId.setEditable(false);
+        txtId.setEditable(false);  // al seleccionar se bloquea el ID para que no lo cambien
         txtId.setBackground(new Color(0xF1F3F8));
         txtNombre.setText(String.valueOf(modeloTabla.getValueAt(fila, 1)));
         txtEdad.setText(String.valueOf(modeloTabla.getValueAt(fila, 2)));

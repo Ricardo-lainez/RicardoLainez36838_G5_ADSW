@@ -10,12 +10,14 @@ import java.util.List;
  * y permite deshacer la ultima operacion.
  */
 public class InvocadorComandos {
+    // pila: el ultimo que entra es el primero que se deshace
     private final Deque<ComandoEstudiante> historial = new ArrayDeque<>();
 
     public String ejecutar(ComandoEstudiante comando) {
+        // no sabe si es registrar, actualizar o eliminar, solo ejecuta
         String resultado = comando.ejecutar();
         if (comando.fueExitoso()) {
-            historial.push(comando);
+            historial.push(comando);  // solo guardamos los que salieron bien
         }
         return resultado;
     }
@@ -24,7 +26,7 @@ public class InvocadorComandos {
         if (historial.isEmpty()) {
             return "No hay operaciones para deshacer.";
         }
-        ComandoEstudiante comando = historial.pop();
+        ComandoEstudiante comando = historial.pop();  // saca el ultimo comando y lo deshace
         return "Deshacer [" + comando.getDescripcion() + "]: " + comando.deshacer();
     }
 

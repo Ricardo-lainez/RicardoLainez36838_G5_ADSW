@@ -20,7 +20,9 @@ import java.util.List;
  */
 public class ControlEstudiante implements SujetoEventosEstudiante {
     private final RepositorioEstudiante repo = new RepositorioEstudiante();
+    // lista de los que estan suscritos a los cambios
     private final List<ObservadorEstudiante> observadores = new ArrayList<>();
+    // por defecto se busca por ID
     private EstrategiaBusquedaEstudiante estrategiaBusqueda = new BusquedaPorIdStrategy();
 
     // ---------- Observer ----------
@@ -36,6 +38,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
 
     @Override
     public void notificarObservadores(EventoEstudiante evento) {
+        // recorre a todos los suscritos y les pasa el evento
         for (ObservadorEstudiante observador : observadores) {
             observador.actualizar(evento);
         }
@@ -44,6 +47,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
     // ---------- CRUD ----------
     // RF-01: Registrar estudiante
     public String agregarEstudiante(String idIngresado, String nombre, int edad) {
+        // primero limpiamos el ID (espacios y mayusculas)
         String id = normalizarId(idIngresado);
         if (!validarId(id)) {
             return "Error: ID invalido. Use el formato ESPE: L seguido de 8 digitos (ej. L00434011).";
@@ -56,7 +60,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
         }
 
         Estudiante estudiante = new Estudiante(id, nombre.trim(), edad);
-        repo.guardar(estudiante);
+        repo.guardar(estudiante);  // se guarda y despues se avisa a los observadores
         notificarObservadores(new EventoEstudiante(TipoEventoEstudiante.REGISTRADO, estudiante.copiar(),
                 "Se registro " + estudiante.getNombre() + " (ID " + id + ")"));
         return "Agregado exitosamente: " + estudiante.getNombre();
@@ -92,6 +96,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
             return "Error: No existe un estudiante con el ID " + id + ".";
         }
 
+        // copia antes de borrar, para el mensaje y el evento
         Estudiante copia = estudiante.copiar();
         repo.eliminar(id);
         notificarObservadores(new EventoEstudiante(TipoEventoEstudiante.ELIMINADO, copia,
@@ -106,7 +111,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
 
     /** El ID sigue el formato institucional de la ESPE: L mayuscula y 8 digitos. */
     public boolean validarId(String id) {
-        return id != null && id.matches("L\\d{8}");
+        return id != null && id.matches("L\\d{8}");  // L y 8 numeros, ej. L00434011
     }
 
     /** Quita espacios y pasa a mayuscula, asi "l00434011" se guarda como "L00434011". */
@@ -118,7 +123,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
     // ---------- Strategy ----------
     // RF-06: Buscar estudiantes con criterio intercambiable
     public void cambiarEstrategiaBusqueda(EstrategiaBusquedaEstudiante estrategia) {
-        this.estrategiaBusqueda = estrategia;
+        this.estrategiaBusqueda = estrategia;  // aqui se cambia el algoritmo en tiempo de ejecucion
     }
 
     public String getNombreEstrategia() {
@@ -129,16 +134,19 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
         if (criterio == null || criterio.trim().isEmpty()) {
             return new ArrayList<>();
         }
+        // el control no sabe cual estrategia es, solo llama a buscar()
         return estrategiaBusqueda.buscar(repo.listarTodos(), criterio);
     }
 
     // ---------- Command (operaciones del receptor para deshacer) ----------
     // RF-07: Deshacer la ultima operacion del CRUD
+    // los comandos piden una copia antes de cambiar algo, para poder deshacer
     public Estudiante obtenerCopia(String id) {
         Estudiante e = repo.buscarPorId(normalizarId(id));
         return e == null ? null : e.copiar();
     }
 
+    // deshacer un registro = borrar al que se acaba de registrar
     public String revertirRegistro(String idIngresado) {
         String id = normalizarId(idIngresado);
         Estudiante e = repo.buscarPorId(id);
@@ -151,6 +159,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
         return "Registro deshecho: " + e.getNombre();
     }
 
+    // deshacer una actualizacion = volver a los datos anteriores
     public String revertirActualizacion(Estudiante anterior) {
         if (anterior == null || repo.buscarPorId(anterior.getId()) == null) {
             return "No se pudo deshacer: el estudiante ya no existe.";
@@ -165,7 +174,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
         if (eliminado == null || repo.existeId(eliminado.getId())) {
             return "No se pudo deshacer: el ID ya esta ocupado.";
         }
-        repo.guardar(eliminado.copiar());
+        repo.guardar(eliminado.copiar());  // deshacer una eliminacion = volver a guardarlo
         notificarObservadores(new EventoEstudiante(TipoEventoEstudiante.DESHECHO, eliminado.copiar(),
                 "Se restauro a " + eliminado.getNombre() + " (ID " + eliminado.getId() + ")"));
         return "Eliminacion deshecha: " + eliminado.getNombre() + " vuelve al registro";

@@ -31,6 +31,7 @@ public class PruebaPatronesComportamiento {
         System.out.println(invocador.ejecutar(new RegistrarEstudianteComando(control, "L00434011", "Ana Torres", 20)));
         System.out.println(invocador.ejecutar(new RegistrarEstudianteComando(control, "L00434012", "Luis Perez", 17)));
         System.out.println(invocador.ejecutar(new RegistrarEstudianteComando(control, "L00434013", "Maria Andrade", 23)));
+        // nombre vacio: debe dar error
         System.out.println(invocador.ejecutar(new RegistrarEstudianteComando(control, "L00434014", "", 19)));
 
         System.out.println("\n=== COMMAND + OBSERVER: Actualizar (RF-02) ===");
@@ -39,6 +40,7 @@ public class PruebaPatronesComportamiento {
         System.out.println("\n=== COMMAND + OBSERVER: Eliminar (RF-03) ===");
         System.out.println(invocador.ejecutar(new EliminarEstudianteComando(control, "L00434012")));
         System.out.println(invocador.ejecutar(new EliminarEstudianteComando(control, "L00434013")));
+        // ID que no existe: debe dar error
         System.out.println(invocador.ejecutar(new EliminarEstudianteComando(control, "L00434099")));
 
         System.out.println("\n=== STRATEGY: Buscar (RF-06) ===");
@@ -56,7 +58,7 @@ public class PruebaPatronesComportamiento {
 
         System.out.println("\n=== COMMAND: Historial y deshacer (RF-07) ===");
         System.out.println("Historial: " + invocador.verHistorial());
-        System.out.println(invocador.deshacerUltimo());
+        System.out.println(invocador.deshacerUltimo());  // deshace la ultima eliminacion
         System.out.println(invocador.deshacerUltimo());
         System.out.println("Historial: " + invocador.verHistorial());
 

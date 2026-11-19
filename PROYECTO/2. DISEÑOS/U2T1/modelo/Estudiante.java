@@ -6,7 +6,7 @@ package U2T1.modelo;
  * lo ingresa el usuario y es final: no se puede modificar despues de crear.
  */
 public class Estudiante {
-    private final String id;
+    private final String id;  // final: el ID no se puede cambiar despues
     private String nombre;
     private int edad;
 
@@ -16,7 +16,7 @@ public class Estudiante {
         this.edad = edad;
     }
 
-    public String getId() { return id; }
+    public String getId() { return id; }  // no hay setId, a proposito
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     public int getEdad() { return edad; }

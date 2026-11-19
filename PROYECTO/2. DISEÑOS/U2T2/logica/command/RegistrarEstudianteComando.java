@@ -4,7 +4,7 @@ import U2T2.logica.ControlEstudiante;
 
 /** Command concreto: registrar un estudiante. Deshacer lo quita del registro. */
 public class RegistrarEstudianteComando implements ComandoEstudiante {
-    private final ControlEstudiante receptor;
+    private final ControlEstudiante receptor;  // el que hace el trabajo real
     private final String id;
     private final String nombre;
     private final int edad;
@@ -19,6 +19,7 @@ public class RegistrarEstudianteComando implements ComandoEstudiante {
 
     @Override
     public String ejecutar() {
+        // el comando no registra, le pide al control que lo haga
         String resultado = receptor.agregarEstudiante(id, nombre, edad);
         exitoso = !resultado.startsWith("Error");
         return resultado;

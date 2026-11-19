@@ -98,6 +98,7 @@ public class CRUDEstudiantesGUI extends JFrame {
 
         // Observer: la auditoria guarda la bitacora y la vista se actualiza sola
         control.agregarObservador(auditoria);
+        // la ventana tambien es un observador
         ObservadorEstudiante observadorVista = this::alRecibirEvento;
         control.agregarObservador(observadorVista);
 
@@ -298,7 +299,7 @@ public class CRUDEstudiantesGUI extends JFrame {
     private void registrar() {
         Integer edad = leerEdad();
         if (edad == null) return;
-        mostrarResultado(invocador.ejecutar(
+        mostrarResultado(invocador.ejecutar(  // cada boton arma un comando y se lo pasa al invocador
                 new RegistrarEstudianteComando(control, txtId.getText(), txtNombre.getText(), edad)));
         if (!lblEstado.getForeground().equals(ERROR)) limpiarFormulario();
     }
@@ -332,6 +333,7 @@ public class CRUDEstudiantesGUI extends JFrame {
 
     private void cambiarEstrategia() {
         switch (cmbEstrategia.getSelectedIndex()) {
+            // segun lo que elija en el combo cambia la estrategia
             case 1: control.cambiarEstrategiaBusqueda(new BusquedaPorNombreStrategy()); break;
             case 2: control.cambiarEstrategiaBusqueda(new BusquedaPorRangoEdadStrategy()); break;
             default: control.cambiarEstrategiaBusqueda(new BusquedaPorIdStrategy());
@@ -346,6 +348,7 @@ public class CRUDEstudiantesGUI extends JFrame {
             refrescarTabla(control.listarTodos());
             return;
         }
+        // misma llamada para las 3 busquedas
         List<Estudiante> resultado = control.buscarEstudiantes(criterio);
         refrescarTabla(resultado);
         lblEstado.setForeground(TEXTO_SUAVE);
@@ -358,6 +361,7 @@ public class CRUDEstudiantesGUI extends JFrame {
     private void alRecibirEvento(EventoEstudiante evento) {
         SwingUtilities.invokeLater(() -> {
             refrescarTabla(control.listarTodos());
+            // el evento aparece arriba en el panel Actividad
             modeloActividad.add(0, "<b>" + evento.getTipo() + "</b><br>" + evento.getMensaje());
             lblHistorial.setText("Historial: " + invocador.verHistorial().size());
         });
@@ -403,7 +407,7 @@ public class CRUDEstudiantesGUI extends JFrame {
         int fila = tabla.getSelectedRow();
         if (fila < 0) return;
         txtId.setText(String.valueOf(modeloTabla.getValueAt(fila, 0)));
-        txtId.setEditable(false);
+        txtId.setEditable(false);  // al seleccionar, el ID se bloquea para que no lo cambien
         txtId.setBackground(new Color(0xF1F3F8));
         txtNombre.setText(String.valueOf(modeloTabla.getValueAt(fila, 1)));
         txtEdad.setText(String.valueOf(modeloTabla.getValueAt(fila, 2)));

@@ -17,6 +17,7 @@ public class EliminarEstudianteComando implements ComandoEstudiante {
 
     @Override
     public String ejecutar() {
+        // copia del estudiante antes de borrarlo, sin esto no se podria deshacer
         eliminado = receptor.obtenerCopia(id);
         String resultado = receptor.eliminarEstudiante(id);
         exitoso = !resultado.startsWith("Error");
@@ -25,7 +26,7 @@ public class EliminarEstudianteComando implements ComandoEstudiante {
 
     @Override
     public String deshacer() {
-        return receptor.revertirEliminacion(eliminado);
+        return receptor.revertirEliminacion(eliminado);  // lo vuelve a guardar con los mismos datos
     }
 
     @Override

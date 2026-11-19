@@ -8,6 +8,7 @@ import java.util.List;
  * No conoce la vista ni valida datos; eso lo hace el controlador.
  */
 public class EstudianteModelo {
+    // los datos viven aqui, en memoria
     private final List<Estudiante> estudiantes = new ArrayList<>();
 
     public boolean existeId(String id) {
@@ -29,7 +30,7 @@ public class EstudianteModelo {
     public void actualizar(String id, String nombre, int edad) {
         Estudiante e = buscarPorId(id);
         if (e != null) {
-            e.setNombre(nombre);
+            e.setNombre(nombre);  // solo nombre y edad, el ID se queda igual
             e.setEdad(edad);
         }
     }

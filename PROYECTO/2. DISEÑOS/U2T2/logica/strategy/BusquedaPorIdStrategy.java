@@ -10,6 +10,7 @@ public class BusquedaPorIdStrategy implements EstrategiaBusquedaEstudiante {
     public List<Estudiante> buscar(List<Estudiante> estudiantes, String criterio) {
         String texto = criterio.trim().toUpperCase();
         return estudiantes.stream()
+                // contains: sirve con el ID completo o con una parte
                 .filter(e -> e.getId().contains(texto))
                 .collect(Collectors.toList());
     }

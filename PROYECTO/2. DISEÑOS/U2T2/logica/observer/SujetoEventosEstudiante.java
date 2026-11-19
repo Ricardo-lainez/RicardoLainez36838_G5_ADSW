@@ -4,5 +4,5 @@ package U2T2.logica.observer;
 public interface SujetoEventosEstudiante {
     void agregarObservador(ObservadorEstudiante observador);
     void quitarObservador(ObservadorEstudiante observador);
-    void notificarObservadores(EventoEstudiante evento);
+    void notificarObservadores(EventoEstudiante evento);  // avisa a todos cuando pasa algo
 }

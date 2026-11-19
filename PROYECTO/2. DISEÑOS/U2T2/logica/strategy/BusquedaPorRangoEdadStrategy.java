@@ -10,13 +10,14 @@ public class BusquedaPorRangoEdadStrategy implements EstrategiaBusquedaEstudiant
     @Override
     public List<Estudiante> buscar(List<Estudiante> estudiantes, String criterio) {
         try {
-            String[] partes = criterio.trim().split("-");
+            String[] partes = criterio.trim().split("-");  // "18-25" se separa en 18 y 25
             int min = Integer.parseInt(partes[0].trim());
             int max = Integer.parseInt(partes[1].trim());
             return estudiantes.stream()
                     .filter(e -> e.getEdad() >= min && e.getEdad() <= max)
                     .collect(Collectors.toList());
         } catch (RuntimeException ex) {
+            // si escriben mal el rango no se cae, solo no encuentra nada
             return new ArrayList<>();
         }
     }

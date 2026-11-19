@@ -9,7 +9,7 @@ import java.util.Objects;
  * lo ingresa el usuario y es final: no se puede modificar despues de crear.
  */
 public class Estudiante {
-    private final String id;
+    private final String id;  // final: una vez creado el estudiante su ID ya no cambia
     private String nombre;
     private int edad;
 
@@ -19,6 +19,7 @@ public class Estudiante {
         this.edad = edad;
     }
 
+    // solo hay get para el ID, no tiene set a proposito
     public String getId() { return id; }
 
     public String getNombre() { return nombre; }

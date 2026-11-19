@@ -9,6 +9,7 @@ public class ObservadorAuditoriaEstudiante implements ObservadorEstudiante {
 
     @Override
     public void actualizar(EventoEstudiante evento) {
+        // solo anota lo que paso, no sabe nada del CRUD
         bitacora.add("[" + evento.getTipo() + "] " + evento.getMensaje());
     }
 

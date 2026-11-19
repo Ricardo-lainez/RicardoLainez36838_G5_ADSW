@@ -21,7 +21,7 @@ public class ActualizarEstudianteComando implements ComandoEstudiante {
 
     @Override
     public String ejecutar() {
-        estadoAnterior = receptor.obtenerCopia(id);
+        estadoAnterior = receptor.obtenerCopia(id);  // guardamos como estaba antes de cambiarlo
         String resultado = receptor.actualizarEstudiante(id, nuevoNombre, nuevaEdad);
         exitoso = !resultado.startsWith("Error");
         return resultado;

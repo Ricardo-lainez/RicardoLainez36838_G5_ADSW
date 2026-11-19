@@ -10,7 +10,7 @@ import java.util.List;
  * aplica las reglas y llama al modelo. Devuelve un mensaje con el resultado.
  */
 public class EstudianteControlador {
-    private final EstudianteModelo modelo;
+    private final EstudianteModelo modelo;  // el controlador es el unico que habla con el modelo
 
     public EstudianteControlador(EstudianteModelo modelo) {
         this.modelo = modelo;
@@ -18,17 +18,18 @@ public class EstudianteControlador {
 
     // RF-01: Registrar estudiante
     public String registrar(String idIngresado, String nombre, String edadTexto) {
-        String id = normalizarId(idIngresado);
+        String id = normalizarId(idIngresado);  // "l00434011 " queda como "L00434011"
         if (!validarId(id)) {
             return "Error: ID invalido. Use el formato ESPE: L seguido de 8 digitos (ej. L00434011).";
         }
-        if (modelo.existeId(id)) {
+        if (modelo.existeId(id)) {  // no se puede repetir el ID
             return "Error: Ya existe un estudiante con el ID " + id + ".";
         }
         Integer edad = convertirEdad(edadTexto);
         if (!validarDatos(nombre, edad)) {
             return "Error: Nombre obligatorio y Edad entre 15 y 99.";
         }
+        // si paso todas las validaciones recien se guarda
         modelo.guardar(new Estudiante(id, nombre.trim(), edad));
         return "Registrado: " + nombre.trim() + " (" + id + ")";
     }
@@ -43,6 +44,7 @@ public class EstudianteControlador {
         String criterio = normalizarId(texto);
         List<Estudiante> resultado = new ArrayList<>();
         for (Estudiante e : modelo.listarTodos()) {
+            // sirve con el ID completo o con una parte
             if (e.getId().contains(criterio)) resultado.add(e);
         }
         return resultado;
@@ -58,6 +60,7 @@ public class EstudianteControlador {
         if (!validarDatos(nombre, edad)) {
             return "Error: Nombre obligatorio y Edad entre 15 y 99.";
         }
+        // el ID solo sirve para encontrarlo, no se cambia
         modelo.actualizar(id, nombre.trim(), edad);
         return "Actualizado: " + id + " (el ID se mantiene)";
     }
@@ -75,7 +78,7 @@ public class EstudianteControlador {
 
     // RF-05: Validaciones
     public boolean validarId(String id) {
-        return id != null && id.matches("L\\d{8}");
+        return id != null && id.matches("L\\d{8}");  // L y 8 numeros
     }
 
     public String normalizarId(String id) {
@@ -90,6 +93,7 @@ public class EstudianteControlador {
         try {
             return Integer.parseInt(texto.trim());
         } catch (RuntimeException e) {
+            // si escriben letras en la edad devuelve null y sale el error
             return null;
         }
     }

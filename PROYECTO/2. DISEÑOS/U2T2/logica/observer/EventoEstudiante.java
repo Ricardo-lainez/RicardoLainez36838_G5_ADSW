@@ -4,6 +4,7 @@ import U2T2.modelo.Estudiante;
 
 /** Observer: datos que reciben los observadores cuando ocurre un evento del CRUD. */
 public class EventoEstudiante {
+    // que paso: registrado, actualizado, eliminado o deshecho
     private final TipoEventoEstudiante tipo;
     private final Estudiante estudiante;
     private final String mensaje;

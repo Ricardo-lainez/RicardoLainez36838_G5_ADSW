@@ -10,6 +10,7 @@ import java.util.List;
  * No aplica reglas de negocio ni validaciones.
  */
 public class RepositorioEstudiante {
+    // aqui se guardan los estudiantes, en memoria (no hay base de datos)
     private final List<Estudiante> estudiantes = new ArrayList<>();
 
     public boolean existeId(String id) {
@@ -36,6 +37,7 @@ public class RepositorioEstudiante {
         estudiantes.removeIf(e -> e.getId().equals(id));
     }
 
+    // devolvemos una copia para que nadie modifique la lista original desde afuera
     public List<Estudiante> listarTodos() {
         return new ArrayList<>(estudiantes);
     }

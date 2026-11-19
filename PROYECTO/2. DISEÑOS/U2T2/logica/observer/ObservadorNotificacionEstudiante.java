@@ -10,6 +10,7 @@ public class ObservadorNotificacionEstudiante implements ObservadorEstudiante {
                 ? "operacion deshecha"
                 : "estudiante " + evento.getTipo().name().toLowerCase();
         ultimaNotificacion = "Notificacion: " + accion + " -> " + evento.getEstudiante();
+        // este observador solo imprime el aviso en consola
         System.out.println("   " + ultimaNotificacion);
     }
 
