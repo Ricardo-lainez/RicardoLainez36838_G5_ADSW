@@ -1,5 +1,11 @@
 package U2T2.logica;
 
+import U2T2.logica.observer.EventoEstudiante;
+import U2T2.logica.observer.ObservadorEstudiante;
+import U2T2.logica.observer.SujetoEventosEstudiante;
+import U2T2.logica.observer.TipoEventoEstudiante;
+import U2T2.logica.strategy.BusquedaPorIdStrategy;
+import U2T2.logica.strategy.EstrategiaBusquedaEstudiante;
 import U2T2.datos.RepositorioEstudiante;
 import U2T2.modelo.Estudiante;
 import java.util.ArrayList;
@@ -141,7 +147,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
         return e == null ? null : e.copiar();
     }
 
-    String revertirRegistro(String idIngresado) {
+    public String revertirRegistro(String idIngresado) {
         String id = normalizarId(idIngresado);
         Estudiante e = repo.buscarPorId(id);
         if (e == null) {
@@ -153,7 +159,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
         return "Registro deshecho: " + e.getNombre();
     }
 
-    String revertirActualizacion(Estudiante anterior) {
+    public String revertirActualizacion(Estudiante anterior) {
         if (anterior == null || repo.buscarPorId(anterior.getId()) == null) {
             return "No se pudo deshacer: el estudiante ya no existe.";
         }
@@ -163,7 +169,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
         return "Actualizacion deshecha: " + anterior;
     }
 
-    String revertirEliminacion(Estudiante eliminado) {
+    public String revertirEliminacion(Estudiante eliminado) {
         if (eliminado == null || repo.existeId(eliminado.getId())) {
             return "No se pudo deshacer: el ID ya esta ocupado.";
         }

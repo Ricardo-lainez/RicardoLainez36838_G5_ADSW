@@ -1,4 +1,4 @@
-package U2T2.logica;
+package U2T2.logica.command;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

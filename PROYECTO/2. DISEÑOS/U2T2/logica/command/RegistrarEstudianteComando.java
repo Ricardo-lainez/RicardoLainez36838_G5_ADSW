@@ -1,4 +1,6 @@
-package U2T2.logica;
+package U2T2.logica.command;
+
+import U2T2.logica.ControlEstudiante;
 
 /** Command concreto: registrar un estudiante. Deshacer lo quita del registro. */
 public class RegistrarEstudianteComando implements ComandoEstudiante {

@@ -1,4 +1,4 @@
-package U2T2.logica;
+package U2T2.logica.observer;
 
 import U2T2.modelo.Estudiante;
 

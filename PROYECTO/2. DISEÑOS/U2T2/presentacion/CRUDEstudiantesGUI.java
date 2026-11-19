@@ -1,16 +1,16 @@
 package U2T2.presentacion;
 
-import U2T2.logica.ActualizarEstudianteComando;
-import U2T2.logica.BusquedaPorIdStrategy;
-import U2T2.logica.BusquedaPorNombreStrategy;
-import U2T2.logica.BusquedaPorRangoEdadStrategy;
 import U2T2.logica.ControlEstudiante;
-import U2T2.logica.EliminarEstudianteComando;
-import U2T2.logica.EventoEstudiante;
-import U2T2.logica.InvocadorComandos;
-import U2T2.logica.ObservadorAuditoriaEstudiante;
-import U2T2.logica.ObservadorEstudiante;
-import U2T2.logica.RegistrarEstudianteComando;
+import U2T2.logica.command.ActualizarEstudianteComando;
+import U2T2.logica.command.EliminarEstudianteComando;
+import U2T2.logica.command.InvocadorComandos;
+import U2T2.logica.command.RegistrarEstudianteComando;
+import U2T2.logica.observer.EventoEstudiante;
+import U2T2.logica.observer.ObservadorAuditoriaEstudiante;
+import U2T2.logica.observer.ObservadorEstudiante;
+import U2T2.logica.strategy.BusquedaPorIdStrategy;
+import U2T2.logica.strategy.BusquedaPorNombreStrategy;
+import U2T2.logica.strategy.BusquedaPorRangoEdadStrategy;
 import U2T2.modelo.Estudiante;
 
 import javax.swing.BorderFactory;

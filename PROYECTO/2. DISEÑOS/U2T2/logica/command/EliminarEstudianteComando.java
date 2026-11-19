@@ -1,5 +1,6 @@
-package U2T2.logica;
+package U2T2.logica.command;
 
+import U2T2.logica.ControlEstudiante;
 import U2T2.modelo.Estudiante;
 
 /** Command concreto: eliminar un estudiante. Guarda una copia para poder restaurarlo. */

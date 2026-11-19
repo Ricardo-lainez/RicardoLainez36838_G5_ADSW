@@ -1,0 +1,50 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontSize 14
+skinparam classFontStyle bold
+package "logica" {
+  class ControlEstudiante {
+    - observadores: List<ObservadorEstudiante>
+    + notificarObservadores(evento): void
+  }
+}
+package "logica.observer" <<Frame>> {
+  interface SujetoEventosEstudiante {
+    + agregarObservador(o): void
+    + quitarObservador(o): void
+    + notificarObservadores(evento): void
+  }
+  interface ObservadorEstudiante {
+    + actualizar(evento: EventoEstudiante): void
+  }
+  class ObservadorAuditoriaEstudiante {
+    - bitacora: List<String>
+  }
+  class ObservadorNotificacionEstudiante {
+    - ultimaNotificacion: String
+  }
+  class EventoEstudiante {
+    - tipo: TipoEventoEstudiante
+    - estudiante: Estudiante
+    - mensaje: String
+  }
+  enum TipoEventoEstudiante {
+    REGISTRADO
+    ACTUALIZADO
+    ELIMINADO
+    DESHECHO
+  }
+}
+class CRUDEstudiantesGUI {
+  - alRecibirEvento(evento): void
+}
+ControlEstudiante ..|> SujetoEventosEstudiante
+ControlEstudiante o--> "0..*" ObservadorEstudiante : notifica
+ObservadorAuditoriaEstudiante ..|> ObservadorEstudiante
+ObservadorNotificacionEstudiante ..|> ObservadorEstudiante
+CRUDEstudiantesGUI ..> ObservadorEstudiante : this::alRecibirEvento
+ObservadorEstudiante ..> EventoEstudiante
+EventoEstudiante --> TipoEventoEstudiante
+
+@enduml

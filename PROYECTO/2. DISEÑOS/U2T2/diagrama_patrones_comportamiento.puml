@@ -1,5 +1,5 @@
 @startuml
-title U2T2 - CRUD Estudiante en tres capas con Observer, Strategy y Command
+title U2T2 - CRUD Estudiante en capas, con una carpeta por patron (observer, strategy, command)
 
 skinparam packageStyle rectangle
 skinparam classAttributeIconSize 0
@@ -41,7 +41,7 @@ package "logica" {
     + notificarObservadores(evento): void
   }
 
-  package "Observer" <<Frame>> {
+  package "observer" <<Frame>> {
     interface SujetoEventosEstudiante {
       + agregarObservador(o): void
       + quitarObservador(o): void
@@ -69,7 +69,7 @@ package "logica" {
     }
   }
 
-  package "Strategy" <<Frame>> {
+  package "strategy" <<Frame>> {
     interface EstrategiaBusquedaEstudiante {
       + buscar(lista, criterio): List<Estudiante>
     }
@@ -78,7 +78,7 @@ package "logica" {
     class BusquedaPorRangoEdadStrategy
   }
 
-  package "Command" <<Frame>> {
+  package "command" <<Frame>> {
     interface ComandoEstudiante {
       + ejecutar(): String
       + deshacer(): String

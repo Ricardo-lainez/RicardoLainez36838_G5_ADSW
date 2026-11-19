@@ -1,0 +1,42 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontSize 14
+skinparam classFontStyle bold
+package "logica" {
+  class ControlEstudiante {
+    + agregarEstudiante(id, nombre, edad): String
+    + actualizarEstudiante(id, nombre, edad): String
+    + eliminarEstudiante(id): String
+    + revertirRegistro(id): String
+    + revertirActualizacion(anterior): String
+    + revertirEliminacion(e): String
+  }
+}
+package "logica.command" <<Frame>> {
+  interface ComandoEstudiante {
+    + ejecutar(): String
+    + deshacer(): String
+    + fueExitoso(): boolean
+    + getDescripcion(): String
+  }
+  class InvocadorComandos {
+    - historial: Deque<ComandoEstudiante>
+    + ejecutar(c: ComandoEstudiante): String
+    + deshacerUltimo(): String
+  }
+  class RegistrarEstudianteComando
+  class ActualizarEstudianteComando
+  class EliminarEstudianteComando
+}
+class CRUDEstudiantesGUI
+CRUDEstudiantesGUI --> InvocadorComandos : entrega comandos
+InvocadorComandos o--> ComandoEstudiante : historial
+RegistrarEstudianteComando ..|> ComandoEstudiante
+ActualizarEstudianteComando ..|> ComandoEstudiante
+EliminarEstudianteComando ..|> ComandoEstudiante
+RegistrarEstudianteComando --> ControlEstudiante : receptor
+ActualizarEstudianteComando --> ControlEstudiante : receptor
+EliminarEstudianteComando --> ControlEstudiante : receptor
+
+@enduml

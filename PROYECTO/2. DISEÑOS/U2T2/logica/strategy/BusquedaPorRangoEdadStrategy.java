@@ -1,4 +1,4 @@
-package U2T2.logica;
+package U2T2.logica.strategy;
 
 import U2T2.modelo.Estudiante;
 import java.util.ArrayList;

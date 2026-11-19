@@ -18,6 +18,7 @@ tiene una interfaz grafica (`CRUDEstudiantesGUI`) y pruebas por consola.
 | Producto | Estado | Evidencia |
 | --- | --- | --- |
 | Proyecto base organizado en tres capas | Cumplido | Carpetas `presentacion`, `logica`, `datos` y `modelo`. |
+| Una carpeta por patron | Cumplido | `logica/observer`, `logica/strategy` y `logica/command`. |
 | Patron Observer aplicado | Cumplido | `SujetoEventosEstudiante`, `ObservadorEstudiante`, `ObservadorAuditoriaEstudiante`, `ObservadorNotificacionEstudiante`. |
 | Patron Strategy aplicado | Cumplido | `EstrategiaBusquedaEstudiante` y sus tres estrategias de busqueda. |
 | Patron Command aplicado | Cumplido | `ComandoEstudiante`, tres comandos concretos e `InvocadorComandos`. |
@@ -28,12 +29,38 @@ tiene una interfaz grafica (`CRUDEstudiantesGUI`) y pruebas por consola.
 | ID con formato ESPE no modificable | Cumplido | `Estudiante.id` es `final`; `ControlEstudiante.validarId` exige L y 8 digitos. |
 | Pruebas por consola | Cumplido | `PruebaCrudEstudiantes`, `PruebaPatronesComportamiento` y `MenuConsolaEstudiantes`. |
 
+## Estructura de carpetas
+
+```text
+U2T2/
+├── modelo/                 Estudiante
+├── datos/                  RepositorioEstudiante
+├── logica/
+│   ├── ControlEstudiante.java
+│   ├── observer/           SujetoEventosEstudiante, ObservadorEstudiante,
+│   │                       ObservadorAuditoriaEstudiante, ObservadorNotificacionEstudiante,
+│   │                       EventoEstudiante, TipoEventoEstudiante
+│   ├── strategy/           EstrategiaBusquedaEstudiante, BusquedaPorIdStrategy,
+│   │                       BusquedaPorNombreStrategy, BusquedaPorRangoEdadStrategy
+│   └── command/            ComandoEstudiante, InvocadorComandos,
+│                           RegistrarEstudianteComando, ActualizarEstudianteComando,
+│                           EliminarEstudianteComando
+└── presentacion/           CRUDEstudiantesGUI, MenuConsolaEstudiantes,
+                            PruebaCrudEstudiantes, PruebaPatronesComportamiento
+```
+
+`ControlEstudiante` queda en `logica` porque participa en los tres patrones: es el
+sujeto de Observer, el contexto de Strategy y el receptor de Command.
+
 ## Responsabilidades por capa
 
 | Capa | Paquete | Responsabilidad | Clases |
 | --- | --- | --- | --- |
 | Presentacion | `U2T2.presentacion` | Capturar datos (interfaz grafica o consola), invocar la logica y mostrar resultados. No accede a persistencia. | `CRUDEstudiantesGUI`, `PruebaCrudEstudiantes`, `PruebaPatronesComportamiento`, `MenuConsolaEstudiantes` |
-| Logica de negocio | `U2T2.logica` | Validar datos, aplicar reglas academicas, coordinar el CRUD y alojar los patrones de comportamiento. | `ControlEstudiante` y las clases de Observer, Strategy y Command |
+| Logica de negocio | `U2T2.logica` | Validar datos, aplicar reglas academicas y coordinar el CRUD. | `ControlEstudiante` |
+| Patron Observer | `U2T2.logica.observer` | Avisar los cambios del CRUD a los suscritos. | `SujetoEventosEstudiante`, `ObservadorEstudiante`, `ObservadorAuditoriaEstudiante`, `ObservadorNotificacionEstudiante`, `EventoEstudiante`, `TipoEventoEstudiante` |
+| Patron Strategy | `U2T2.logica.strategy` | Intercambiar el criterio de busqueda. | `EstrategiaBusquedaEstudiante`, `BusquedaPorIdStrategy`, `BusquedaPorNombreStrategy`, `BusquedaPorRangoEdadStrategy` |
+| Patron Command | `U2T2.logica.command` | Encapsular cada operacion con historial y deshacer. | `ComandoEstudiante`, `InvocadorComandos`, `RegistrarEstudianteComando`, `ActualizarEstudianteComando`, `EliminarEstudianteComando` |
 | Datos | `U2T2.datos` | Gestionar la coleccion de estudiantes en memoria sin reglas de negocio. | `RepositorioEstudiante` |
 | Modelo | `U2T2.modelo` | Representar la entidad del dominio con ID ESPE (final), Nombre y Edad. | `Estudiante` |
 
@@ -135,7 +162,7 @@ Presentacion -> InvocadorComandos -> Comando -> ControlEstudiante -> Repositorio
 | La capa de presentacion no accede directamente a la persistencia. | Cumplido: `CRUDEstudiantesGUI` y las pruebas solo usan `InvocadorComandos` y `ControlEstudiante`. |
 | El ID es el de la ESPE y no se modifica. | Cumplido: lo ingresa el usuario, se valida con `validarId` y es `final` en `Estudiante`. |
 | Las validaciones y reglas estan en la logica de negocio. | Cumplido: `validarDatos` y la regla de eliminacion estan en `ControlEstudiante`. |
-| Los patrones se ubican en la logica de negocio. | Cumplido: todas las clases de Observer, Strategy y Command estan en `U2T2.logica`. |
+| Los patrones se ubican en la logica de negocio. | Cumplido: cada patron tiene su carpeta dentro de `U2T2.logica` (`observer`, `strategy` y `command`). |
 | Cada patron esta vinculado a un requisito. | Cumplido: ver matriz RF-01 a RF-07 y RNF-01. |
 | El proyecto es comprensible, ejecutable y documentado. | Cumplido: README, PlantUML y pruebas de consola. |
 

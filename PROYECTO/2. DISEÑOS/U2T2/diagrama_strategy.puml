@@ -1,0 +1,34 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontSize 14
+skinparam classFontStyle bold
+package "logica" {
+  class ControlEstudiante {
+    - estrategiaBusqueda: EstrategiaBusquedaEstudiante
+    + cambiarEstrategiaBusqueda(e): void
+    + buscarEstudiantes(criterio): List<Estudiante>
+  }
+}
+package "logica.strategy" <<Frame>> {
+  interface EstrategiaBusquedaEstudiante {
+    + buscar(lista, criterio): List<Estudiante>
+  }
+  class BusquedaPorIdStrategy {
+    + buscar(lista, criterio): List<Estudiante>
+  }
+  class BusquedaPorNombreStrategy {
+    + buscar(lista, criterio): List<Estudiante>
+  }
+  class BusquedaPorRangoEdadStrategy {
+    + buscar(lista, criterio): List<Estudiante>
+  }
+}
+class CRUDEstudiantesGUI
+CRUDEstudiantesGUI --> ControlEstudiante : elige la estrategia
+ControlEstudiante o--> EstrategiaBusquedaEstudiante : estrategia actual
+BusquedaPorIdStrategy ..|> EstrategiaBusquedaEstudiante
+BusquedaPorNombreStrategy ..|> EstrategiaBusquedaEstudiante
+BusquedaPorRangoEdadStrategy ..|> EstrategiaBusquedaEstudiante
+
+@enduml

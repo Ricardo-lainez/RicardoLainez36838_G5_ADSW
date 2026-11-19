@@ -1,4 +1,4 @@
-package U2T2.logica;
+package U2T2.logica.observer;
 
 /** Observer concreto: muestra un aviso en consola cada vez que ocurre un evento. */
 public class ObservadorNotificacionEstudiante implements ObservadorEstudiante {
