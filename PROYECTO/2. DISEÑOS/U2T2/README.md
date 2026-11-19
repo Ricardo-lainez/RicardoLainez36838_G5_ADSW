@@ -57,7 +57,7 @@ sujeto de Observer, el contexto de Strategy y el receptor de Command.
 | Capa | Paquete | Responsabilidad | Clases |
 | --- | --- | --- | --- |
 | Presentacion | `U2T2.presentacion` | Capturar datos (interfaz grafica o consola), invocar la logica y mostrar resultados. No accede a persistencia. | `CRUDEstudiantesGUI`, `PruebaCrudEstudiantes`, `PruebaPatronesComportamiento`, `MenuConsolaEstudiantes` |
-| Logica de negocio | `U2T2.logica` | Validar datos, aplicar reglas academicas y coordinar el CRUD. | `ControlEstudiante` |
+| Logica de negocio | `U2T2.logica` | Validar datos, aplicar las validaciones y coordinar el CRUD. | `ControlEstudiante` |
 | Patron Observer | `U2T2.logica.observer` | Avisar los cambios del CRUD a los suscritos. | `SujetoEventosEstudiante`, `ObservadorEstudiante`, `ObservadorAuditoriaEstudiante`, `ObservadorNotificacionEstudiante`, `EventoEstudiante`, `TipoEventoEstudiante` |
 | Patron Strategy | `U2T2.logica.strategy` | Intercambiar el criterio de busqueda. | `EstrategiaBusquedaEstudiante`, `BusquedaPorIdStrategy`, `BusquedaPorNombreStrategy`, `BusquedaPorRangoEdadStrategy` |
 | Patron Command | `U2T2.logica.command` | Encapsular cada operacion con historial y deshacer. | `ComandoEstudiante`, `InvocadorComandos`, `RegistrarEstudianteComando`, `ActualizarEstudianteComando`, `EliminarEstudianteComando` |
@@ -119,7 +119,7 @@ para deshacerse y solo los comandos exitosos entran al historial.
 | --- | --- | --- | --- | --- | --- |
 | RF-01 | El sistema debe permitir registrar un estudiante con ID ESPE, Nombre y Edad. | Create | Command + Observer | `RegistrarEstudianteComando`, `ControlEstudiante.agregarEstudiante`, `RepositorioEstudiante.guardar`, evento `REGISTRADO` | `PruebaPatronesComportamiento`: bloque "Registrar (RF-01)" |
 | RF-02 | El sistema debe permitir actualizar el nombre y la edad de un estudiante existente sin modificar su ID. | Update | Command + Observer | `ActualizarEstudianteComando`, `ControlEstudiante.actualizarEstudiante`, `RepositorioEstudiante.actualizar`, evento `ACTUALIZADO` | Bloque "Actualizar (RF-02)" |
-| RF-03 | El sistema debe permitir eliminar un estudiante segun la regla academica (mayor de 18 anios). | Delete | Command + Observer | `EliminarEstudianteComando`, `ControlEstudiante.eliminarEstudiante`, `RepositorioEstudiante.eliminar`, evento `ELIMINADO` | Bloque "Eliminar (RF-03)": el menor de edad no se elimina ni notifica |
+| RF-03 | El sistema debe permitir eliminar a cualquier estudiante registrado. | Delete | Command + Observer | `EliminarEstudianteComando`, `ControlEstudiante.eliminarEstudiante`, `RepositorioEstudiante.eliminar`, evento `ELIMINADO` | Bloque "Eliminar (RF-03)": se elimina y se notifica, y un ID que no existe da error |
 | RF-04 | El sistema debe mostrar todos los estudiantes registrados. | Read/List | Ninguno (CRUD base) | `ControlEstudiante.listarTodos`, `RepositorioEstudiante.listarTodos` | Bloque "Lista final" |
 | RF-05 | El sistema debe validar el formato del ID ESPE (L y 8 digitos), el nombre y la edad (15 a 99) antes de guardar o actualizar. | Validacion | Ninguno (CRUD base) | `ControlEstudiante.validarId`, `ControlEstudiante.validarDatos`, `ControlEstudiante.normalizarId` | `PruebaCrudEstudiantes`: bloque "RF-05 Validar" |
 | RF-06 | El sistema debe permitir buscar estudiantes por ID, Nombre o Rango de edad. | Read/Buscar | Strategy | `EstrategiaBusquedaEstudiante`, estrategias concretas, `ControlEstudiante.buscarEstudiantes` | Bloque "Buscar (RF-06)" |
@@ -161,7 +161,7 @@ Presentacion -> InvocadorComandos -> Comando -> ControlEstudiante -> Repositorio
 | --- | --- |
 | La capa de presentacion no accede directamente a la persistencia. | Cumplido: `CRUDEstudiantesGUI` y las pruebas solo usan `InvocadorComandos` y `ControlEstudiante`. |
 | El ID es el de la ESPE y no se modifica. | Cumplido: lo ingresa el usuario, se valida con `validarId` y es `final` en `Estudiante`. |
-| Las validaciones y reglas estan en la logica de negocio. | Cumplido: `validarDatos` y la regla de eliminacion estan en `ControlEstudiante`. |
+| Las validaciones y reglas estan en la logica de negocio. | Cumplido: `validarId` y `validarDatos` estan en `ControlEstudiante`. |
 | Los patrones se ubican en la logica de negocio. | Cumplido: cada patron tiene su carpeta dentro de `U2T2.logica` (`observer`, `strategy` y `command`). |
 | Cada patron esta vinculado a un requisito. | Cumplido: ver matriz RF-01 a RF-07 y RNF-01. |
 | El proyecto es comprensible, ejecutable y documentado. | Cumplido: README, PlantUML y pruebas de consola. |
@@ -221,39 +221,41 @@ Error: Datos invalidos. Nombre no puede estar vacio y Edad debe estar entre 15 y
 Actualizado exitosamente: ID L00434011
 
 === COMMAND + OBSERVER: Eliminar (RF-03) ===
-Error: Regla academica - no se puede eliminar a 'Luis Perez' porque es menor de 18 anios (Edad: 17).
+   Notificacion: estudiante eliminado -> Estudiante [ID=L00434012, Nombre=Luis Perez, Edad=17]
+Eliminado exitosamente: Luis Perez (ID L00434012)
    Notificacion: estudiante eliminado -> Estudiante [ID=L00434013, Nombre=Maria Andrade, Edad=23]
 Eliminado exitosamente: Maria Andrade (ID L00434013)
+Error: No existe un estudiante con el ID L00434099.
 
 === STRATEGY: Buscar (RF-06) ===
 Estrategia por ID, criterio 'L00434011':
    Estudiante [ID=L00434011, Nombre=Ana Torres Vega, Edad=21]
 Estrategia por Nombre, criterio 'perez':
-   Estudiante [ID=L00434012, Nombre=Luis Perez, Edad=17]
 Estrategia por Rango de edad, criterio '18-30':
    Estudiante [ID=L00434011, Nombre=Ana Torres Vega, Edad=21]
 
 === COMMAND: Historial y deshacer (RF-07) ===
-Historial: [Registrar ID L00434011 (Ana Torres), Registrar ID L00434012 (Luis Perez), Registrar ID L00434013 (Maria Andrade), Actualizar ID L00434011, Eliminar ID L00434013]
+Historial: [Registrar ID L00434011 (Ana Torres), Registrar ID L00434012 (Luis Perez), Registrar ID L00434013 (Maria Andrade), Actualizar ID L00434011, Eliminar ID L00434012, Eliminar ID L00434013]
    Notificacion: operacion deshecha -> Estudiante [ID=L00434013, Nombre=Maria Andrade, Edad=23]
 Deshacer [Eliminar ID L00434013]: Eliminacion deshecha: Maria Andrade vuelve al registro
-   Notificacion: operacion deshecha -> Estudiante [ID=L00434011, Nombre=Ana Torres, Edad=20]
-Deshacer [Actualizar ID L00434011]: Actualizacion deshecha: Estudiante [ID=L00434011, Nombre=Ana Torres, Edad=20]
-Historial: [Registrar ID L00434011 (Ana Torres), Registrar ID L00434012 (Luis Perez), Registrar ID L00434013 (Maria Andrade)]
+   Notificacion: operacion deshecha -> Estudiante [ID=L00434012, Nombre=Luis Perez, Edad=17]
+Deshacer [Eliminar ID L00434012]: Eliminacion deshecha: Luis Perez vuelve al registro
+Historial: [Registrar ID L00434011 (Ana Torres), Registrar ID L00434012 (Luis Perez), Registrar ID L00434013 (Maria Andrade), Actualizar ID L00434011]
 
 === RF-04 Lista final ===
-Estudiante [ID=L00434011, Nombre=Ana Torres, Edad=20]
-Estudiante [ID=L00434012, Nombre=Luis Perez, Edad=17]
+Estudiante [ID=L00434011, Nombre=Ana Torres Vega, Edad=21]
 Estudiante [ID=L00434013, Nombre=Maria Andrade, Edad=23]
+Estudiante [ID=L00434012, Nombre=Luis Perez, Edad=17]
 
 === OBSERVER: Bitacora de auditoria ===
    [REGISTRADO] Se registro Ana Torres (ID L00434011)
    [REGISTRADO] Se registro Luis Perez (ID L00434012)
    [REGISTRADO] Se registro Maria Andrade (ID L00434013)
    [ACTUALIZADO] Se actualizo el ID L00434011 a Ana Torres Vega, 21 anios
+   [ELIMINADO] Se elimino Luis Perez (ID L00434012)
    [ELIMINADO] Se elimino Maria Andrade (ID L00434013)
    [DESHECHO] Se restauro a Maria Andrade (ID L00434013)
-   [DESHECHO] Se restauraron los datos del ID L00434011
+   [DESHECHO] Se restauro a Luis Perez (ID L00434012)
 ```
 
 ## Informe

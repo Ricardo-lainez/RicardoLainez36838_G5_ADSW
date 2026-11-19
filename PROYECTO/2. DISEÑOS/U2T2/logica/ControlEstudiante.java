@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * CAPA: Logica de negocio
- * Responsabilidad: validar datos, aplicar reglas academicas y coordinar el CRUD.
+ * Responsabilidad: validar datos, aplicar las validaciones y coordinar el CRUD.
  * Observer: es el sujeto concreto que notifica los eventos del CRUD.
  * Strategy: es el contexto que usa la estrategia de busqueda actual.
  * Command: es el receptor que ejecuta las operaciones pedidas por los comandos.
@@ -91,11 +91,6 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
         if (estudiante == null) {
             return "Error: No existe un estudiante con el ID " + id + ".";
         }
-        if (!cumpleReglaEliminacion(estudiante)) {
-            return "Error: Regla academica - no se puede eliminar a '"
-                    + estudiante.getNombre() + "' porque es menor de 18 anios (Edad: "
-                    + estudiante.getEdad() + ").";
-        }
 
         Estudiante copia = estudiante.copiar();
         repo.eliminar(id);
@@ -119,9 +114,6 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
         return id == null ? "" : id.trim().toUpperCase();
     }
 
-    private boolean cumpleReglaEliminacion(Estudiante estudiante) {
-        return estudiante.getEdad() >= 18;
-    }
 
     // ---------- Strategy ----------
     // RF-06: Buscar estudiantes con criterio intercambiable

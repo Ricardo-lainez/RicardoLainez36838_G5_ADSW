@@ -39,6 +39,7 @@ public class PruebaPatronesComportamiento {
         System.out.println("\n=== COMMAND + OBSERVER: Eliminar (RF-03) ===");
         System.out.println(invocador.ejecutar(new EliminarEstudianteComando(control, "L00434012")));
         System.out.println(invocador.ejecutar(new EliminarEstudianteComando(control, "L00434013")));
+        System.out.println(invocador.ejecutar(new EliminarEstudianteComando(control, "L00434099")));
 
         System.out.println("\n=== STRATEGY: Buscar (RF-06) ===");
         control.cambiarEstrategiaBusqueda(new BusquedaPorIdStrategy());
