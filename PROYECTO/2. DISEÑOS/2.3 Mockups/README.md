@@ -2,6 +2,7 @@
 
 | Archivo | Requisito |
 |---|---|
+| RF001_login.png | Autenticar en el sistema (personal del restaurante): ingreso y aviso de campos vacíos |
 | RF002_pedido_mesa.png | Tomar pedido en mesa (mesero) |
 | RF004_pedido_qr.png | Realizar pedido por QR (cliente, vista de celular) |
 | RF005_cocina.png | Gestionar preparación del pedido (cocinero) |

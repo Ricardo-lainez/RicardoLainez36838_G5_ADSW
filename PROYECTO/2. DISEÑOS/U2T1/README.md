@@ -137,3 +137,8 @@ Eliminado: Ricardo Lainez (L00434012)
 === Lista final ===
 Estudiante [ID=L00434011, Nombre=Marco Adrian Padilla, Edad=22]
 ```
+
+## Informe
+
+- [Informe_U2T1_CRUD_MVC_G5.pdf](Informe_U2T1_CRUD_MVC_G5.pdf)
+- [Informe_U2T1_CRUD_MVC_G5.docx](Informe_U2T1_CRUD_MVC_G5.docx)

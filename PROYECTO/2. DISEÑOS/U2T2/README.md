@@ -228,3 +228,8 @@ Estudiante [ID=L00434013, Nombre=Maria Andrade, Edad=23]
    [DESHECHO] Se restauro a Maria Andrade (ID L00434013)
    [DESHECHO] Se restauraron los datos del ID L00434011
 ```
+
+## Informe
+
+- [Informe_U2T2_Patrones_Comportamiento_G5.pdf](Informe_U2T2_Patrones_Comportamiento_G5.pdf)
+- [Informe_U2T2_Patrones_Comportamiento_G5.docx](Informe_U2T2_Patrones_Comportamiento_G5.docx)
