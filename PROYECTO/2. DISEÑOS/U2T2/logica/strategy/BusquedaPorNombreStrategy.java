@@ -4,7 +4,7 @@ import U2T2.modelo.Estudiante;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** Strategy concreta: busca por coincidencia parcial del nombre, sin importar mayusculas. */
+/** Strategy concreta 2 de 3: busca por una parte del nombre, sin importar mayusculas. */
 public class BusquedaPorNombreStrategy implements EstrategiaBusquedaEstudiante {
     @Override
     public List<Estudiante> buscar(List<Estudiante> estudiantes, String criterio) {

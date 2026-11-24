@@ -22,7 +22,7 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
     private final RepositorioEstudiante repo = new RepositorioEstudiante();
     // lista de los que estan suscritos a los cambios
     private final List<ObservadorEstudiante> observadores = new ArrayList<>();
-    // por defecto se busca por ID
+    // Strategy: el control es el contexto, guarda la estrategia actual (por defecto busca por ID)
     private EstrategiaBusquedaEstudiante estrategiaBusqueda = new BusquedaPorIdStrategy();
 
     // ---------- Observer ----------
@@ -122,10 +122,12 @@ public class ControlEstudiante implements SujetoEventosEstudiante {
 
     // ---------- Strategy ----------
     // RF-06: Buscar estudiantes con criterio intercambiable
+    // recibe cualquier clase que cumpla la interfaz, no importa cual
     public void cambiarEstrategiaBusqueda(EstrategiaBusquedaEstudiante estrategia) {
         this.estrategiaBusqueda = estrategia;  // aqui se cambia el algoritmo en tiempo de ejecucion
     }
 
+    // solo para mostrar en pantalla cual se esta usando
     public String getNombreEstrategia() {
         return estrategiaBusqueda.getNombre();
     }

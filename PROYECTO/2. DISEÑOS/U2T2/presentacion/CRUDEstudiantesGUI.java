@@ -226,6 +226,7 @@ public class CRUDEstudiantesGUI extends JFrame {
 
     private void cambiarEstrategia(int indice) {
         iniciarAccion("Cambiar estrategia");
+        // segun el boton que se presiono se crea un objeto estrategia distinto
         EstrategiaBusquedaEstudiante estrategia;
         switch (indice) {
             case 1: estrategia = new BusquedaPorNombreStrategy(); break;
@@ -234,7 +235,7 @@ public class CRUDEstudiantesGUI extends JFrame {
         }
         control.cambiarEstrategiaBusqueda(estrategia);  // se cambia el algoritmo sin tocar el control
         marcarEstrategia(indice);
-        tarjetaStrategy.activar();
+        tarjetaStrategy.activar();  // se ilumina la tarjeta naranja
         trazar(C_STRATEGY, "STRATEGY", "cambiarEstrategiaBusqueda(new " + nombresEstrategias[indice] + "())");
         lblEstado.setForeground(TEXTO_SUAVE);
         lblEstado.setText("Estrategia de busqueda: " + control.getNombreEstrategia());
@@ -379,6 +380,7 @@ public class CRUDEstudiantesGUI extends JFrame {
         String[] textos = {"Por ID", "Por nombre", "Por rango edad"};
         for (int i = 0; i < 3; i++) {
             final int indice = i;
+            // cada boton naranja cambia la estrategia de busqueda (Strategy)
             botonesEstrategia[i] = boton(textos[i], new Color(0xFFF4E0), C_STRATEGY, e -> cambiarEstrategia(indice));
             segmentos.add(botonesEstrategia[i]);
         }
