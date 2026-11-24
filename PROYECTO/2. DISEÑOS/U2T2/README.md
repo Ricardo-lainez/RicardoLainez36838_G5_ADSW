@@ -25,7 +25,7 @@ tiene una interfaz grafica (`CRUDEstudiantesGUI`) y pruebas por consola.
 | Diagrama de clases con los patrones | Cumplido | `diagrama_patrones_comportamiento.puml` y `.png`. |
 | Tabla de responsabilidades por capa | Cumplido | Seccion "Responsabilidades por capa". |
 | Matriz de trazabilidad | Cumplido | Seccion "Matriz de trazabilidad". |
-| Interfaz grafica minimalista | Cumplido | `CRUDEstudiantesGUI` y `captura_gui.png`. |
+| Interfaz que evidencia los patrones | Cumplido | `CRUDEstudiantesGUI` (tarjetas por patron y traza de patrones) y `captura_gui.png`. |
 | ID con formato ESPE no modificable | Cumplido | `Estudiante.id` es `final`; `ControlEstudiante.validarId` exige L y 8 digitos. |
 | Pruebas por consola | Cumplido | `PruebaCrudEstudiantes`, `PruebaPatronesComportamiento` y `MenuConsolaEstudiantes`. |
 
@@ -76,7 +76,7 @@ enterarse (auditoria y avisos) sin que el CRUD dependa de ellas.
 | Sujeto (contrato) | `SujetoEventosEstudiante` |
 | Sujeto concreto | `ControlEstudiante` |
 | Observador (contrato) | `ObservadorEstudiante` |
-| Observadores concretos | `ObservadorAuditoriaEstudiante` (bitacora), `ObservadorNotificacionEstudiante` (aviso en consola) y la propia `CRUDEstudiantesGUI`, que se suscribe para refrescar la tabla y el panel de Actividad |
+| Observadores concretos | `ObservadorAuditoriaEstudiante` (bitacora), `ObservadorNotificacionEstudiante` (aviso en consola) y la propia `CRUDEstudiantesGUI`, que se suscribe para refrescar la tabla |
 | Datos del evento | `EventoEstudiante`, `TipoEventoEstudiante` (`REGISTRADO`, `ACTUALIZADO`, `ELIMINADO`, `DESHECHO`) |
 
 Justificacion: agregar un nuevo observador (por ejemplo, enviar un correo) no
@@ -128,15 +128,18 @@ para deshacerse y solo los comandos exitosos entran al historial.
 
 ## Interfaz grafica
 
-`CRUDEstudiantesGUI` tiene tres paneles:
+`CRUDEstudiantesGUI` esta pensada para que se vea en que momento actua cada patron. Cada patron tiene un color: Command en azul, Observer en verde y Strategy en naranja.
 
-| Panel | Uso | Patron |
+| Zona | Que muestra | Patron |
 | --- | --- | --- |
-| Datos del estudiante | Formulario con ID ESPE, Nombre y Edad, y botones Registrar, Actualizar, Eliminar y Limpiar. Al seleccionar una fila el ID se bloquea. | Command: cada boton crea un comando y lo ejecuta el invocador |
-| Estudiantes registrados | Tabla con los estudiantes y barra de busqueda con selector de estrategia (Por ID, Por Nombre, Por rango de edad). | Strategy |
-| Actividad | Bitacora de eventos que se actualiza sola en cada operacion. | Observer |
+| Datos del estudiante | Formulario con ID ESPE, Nombre y Edad, y botones Registrar, Actualizar, Eliminar y Limpiar. Al seleccionar una fila el ID se bloquea. | Command: cada boton crea un comando |
+| Estudiantes registrados | Tabla y buscador con tres botones para elegir la estrategia (Por ID, Por nombre, Por rango edad). | Strategy |
+| Tarjeta COMMAND | Ultimo comando creado, metodo del receptor que se ejecuto, pila del historial y boton Deshacer ultimo. | Command |
+| Tarjeta OBSERVER | Ultimo evento y los tres observadores suscritos (Auditoria, Notificacion y Vista), que se encienden cuando reciben el aviso. | Observer |
+| Tarjeta STRATEGY | Clase de la estrategia activa, el contexto que la usa y el resultado de la ultima busqueda. | Strategy |
+| Traza de patrones | Lista paso a paso de cada accion con el patron que intervino, por ejemplo: se crea el comando, el invocador lo ejecuta, se avisa a cada observador y se apila en el historial. | Los tres |
 
-El boton `Deshacer` del encabezado revierte la ultima operacion (Command) y la barra inferior muestra el resultado en verde o rojo.
+Despues de cada accion solo quedan resaltadas (borde de color y etiqueta ACTIVO) las tarjetas de los patrones que participaron. La barra inferior muestra el resultado en verde o rojo.
 
 ![Interfaz grafica del CRUD](captura_gui.png)
 
