@@ -1,0 +1,51 @@
+@startuml
+/'
+METADATOS DE TRAZABILIDAD
+Requisito: REQ001 (RF-01 de la ERS) - Autenticar en el sistema
+Caso de uso: CU 0-0 (Guía 1 y Guía 2)
+Historia de usuario: REQ001 en MTZHU_G5_V1.1.xlsx
+Jira: SCRUM-44 (Sprint 5)
+
+Prompt: Actúa como un Analista de Software y Diseñador UML. Con base en el siguiente requisito atómico, genera el código PlantUML correspondiente a un Diagrama de Clases que modele la ontología básica de esta funcionalidad (frontera, controlador, entidades y persistencia desacoplada). Usa los nombres de las clases de análisis de la Guía 2 del proyecto Bocatto: PantallaLogin, ControlAutenticacion, Usuario, RepositorioUsuario.
+
+Requisito Atómico: "El sistema de gestión de pedidos Bocatto deberá permitir al personal del restaurante (Mesero, Operador, Cocinero, Cajero o Administrador) ingresar con su usuario y contraseña, validar que el usuario exista y que la contraseña sea correcta, y mostrar solo las funciones permitidas para su rol; si los datos están vacíos o son incorrectos, no deberá permitir el ingreso."
+'/
+title Diagrama de clases REQ001 - Autenticar en el sistema
+allowmixing
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #3B2A20
+  HeaderBackgroundColor #FDEBDD
+}
+actor "Personal del restaurante" as Personal
+class "PantallaLogin" <<boundary>> {
+  - nombreUsuario: String
+  + ingresarCredenciales(nombreUsuario: String, contrasena: String)
+  + clickIngresar()
+  + mostrarFuncionesRol(permisos: List<String>)
+  + mostrarMensaje(mensaje: String)
+}
+class "ControlAutenticacion" <<control>> {
+  + autenticar(nombreUsuario: String, contrasena: String): Resultado
+  + validarDatosCompletos(nombreUsuario: String, contrasena: String): boolean
+  + obtenerPermisos(rol: String): List<String>
+}
+class "Usuario" <<entity>> {
+  - nombreUsuario: String
+  - contrasena: String
+  - rol: String
+  + validarContrasena(contrasena: String): boolean
+  + getRol(): String
+}
+class "RepositorioUsuario" <<repository>> {
+  + buscarPorNombre(nombreUsuario: String): Usuario
+}
+Personal --> PantallaLogin : usa
+PantallaLogin --> ControlAutenticacion : solicita acceso
+ControlAutenticacion --> RepositorioUsuario : consulta
+ControlAutenticacion ..> Usuario : valida
+note bottom of Usuario : rol: Mesero, Operador, Cocinero,\nCajero o Administrador
+note right of ControlAutenticacion : si el usuario no existe o la\ncontraseña es incorrecta,\nno permite el ingreso
+@enduml

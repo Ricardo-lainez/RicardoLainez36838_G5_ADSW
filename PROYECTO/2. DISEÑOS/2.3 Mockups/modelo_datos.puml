@@ -7,8 +7,14 @@ skinparam class {
   BorderColor #3B2A20
   HeaderBackgroundColor #FDEBDD
 }
-title Modelo de datos propuesto - Sistema Bocatto (RF002, RF004, RF005 y RF006)
+title Modelo de datos propuesto - Sistema Bocatto (RF001, RF002, RF004, RF005 y RF006)
 
+entity "USUARIO" as usuario {
+  * nombre_usuario : VARCHAR(50) <<PK>>
+  --
+  * contrasena : VARCHAR(255)
+  * rol : VARCHAR(25)
+}
 entity "MESA" as mesa {
   * numero_mesa : INT <<PK>>
   --
@@ -48,6 +54,10 @@ entity "DETALLE_PEDIDO" as detalle {
 mesa ||..o{ pedido : "tiene"
 pedido ||..|{ detalle : "contiene"
 producto ||..o{ detalle : "se pide en"
+note bottom of usuario
+rol: mesero, operador, cocinero,
+cajero o administrador
+end note
 note bottom of pedido
 canal: mesa o qr
 estado: pendiente, en preparacion, listo,

@@ -1,15 +1,30 @@
 # 1.8 Archivos de Respaldo
 
-Fichas de trazabilidad y modelado de los 4 requisitos terminados en los sprints 1 a 4. Para cada requisito se usó un modelo de lenguaje con un prompt de ingeniería que genera el código PlantUML de su diagrama de clases. El prompt original va dentro del código como comentario de metadatos (`/' ... '/`), para que el modelo quede ligado a su requisito.
+Fichas de trazabilidad y modelado de los requisitos trabajados en los sprints 1 a 5. Para cada requisito se usó un modelo de lenguaje con un prompt de ingeniería que genera el código PlantUML de su diagrama de clases. El prompt original va dentro del código como comentario de metadatos (`/' ... '/`), para que el modelo quede ligado a su requisito.
 
 ## Especificación de los requisitos usados
 
 | Requisito funcional | Objetivo principal | Clases actoras |
 |---|---|---|
+| REQ001 (RF-01) | Permitir que el personal ingrese con usuario y contraseña y vea solo las funciones de su rol. | Personal del restaurante (actor), PantallaLogin, ControlAutenticacion, Usuario, RepositorioUsuario |
 | REQ002 (RF-02) | Registrar el pedido de una mesa numerada con productos, cantidades y observaciones, y enviarlo a cocina en estado pendiente. | Mesero (actor), PantallaPedido, ControlPedido, Pedido, Mesa, Producto, RepositorioPedido |
 | REQ004 (RF-04) | Permitir que el cliente haga su pedido desde el celular escaneando el QR de su mesa y eligiendo productos del menú digital. | Cliente (actor), PantallaMenuDigital, ControlPedidoQR, Pedido, Mesa, Producto, Promocion, RepositorioPedido |
 | REQ005 (RF-05) | Mostrar al cocinero los pedidos pendientes y permitirle cambiar su estado siguiendo la secuencia definida. | Cocinero (actor), PantallaCocina, ControlPreparacion, Pedido, RepositorioPedido |
 | REQ006 (RF-06) | Buscar el pedido de una mesa, mostrar el total y registrar el método de pago para dejarlo pagado. | Cajero (actor), PantallaCaja, ControlCobro, Pedido, Mesa, RepositorioPedido |
+
+## Ficha de trazabilidad y modelado: REQ001 Autenticar en el sistema
+
+**Requisito atómico:** "El sistema de gestión de pedidos Bocatto deberá permitir al personal del restaurante (Mesero, Operador, Cocinero, Cajero o Administrador) ingresar con su usuario y contraseña, validar que el usuario exista y que la contraseña sea correcta, y mostrar solo las funciones permitidas para su rol; si los datos están vacíos o son incorrectos, no deberá permitir el ingreso."
+
+**Artefacto generado:** diagrama de clases de análisis con frontera, controlador, entidad y repositorio (PantallaLogin, ControlAutenticacion, Usuario, RepositorioUsuario).
+
+**Metadatos embebidos:** prompt original integrado en la cabecera del archivo fuente mediante etiquetas `/' ... '/` para asegurar la trazabilidad modelo-requisito.
+
+**Trazabilidad:** RF-01 (ERS) → CU 0-0 (Guía 1 y Guía 2) → historia REQ001 (MTZHU_G5_V1.1.xlsx) → SCRUM-44 en Jira (Sprint 5) → página en Confluence.
+
+**Archivo de respaldo:** [REQ001_Autenticar.txt](https://github.com/Ricardo-lainez/RicardoLainez36838_G5_ADSW/blob/main/PROYECTO/1.%20ELICITACION/1.8%20Archivos%20de%20Respaldo/REQ001_Autenticar.txt)
+
+**Diagrama:** [REQ001_Autenticar.png](https://github.com/Ricardo-lainez/RicardoLainez36838_G5_ADSW/blob/main/PROYECTO/2.%20DISE%C3%91OS/2.5%20Diagramas%20de%20clases%20por%20requisito/REQ001_Autenticar.png)
 
 ## Ficha de trazabilidad y modelado: REQ002 Tomar pedido en mesa
 
