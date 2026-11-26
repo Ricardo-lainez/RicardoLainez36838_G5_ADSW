@@ -1,0 +1,57 @@
+@startuml
+title Patrón Observer en CU 0-4 Gestionar preparación del pedido\n(conecta CU 0-1, CU 0-2, CU 0-3, CU 0-5 y CU 0-6)
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #3B2A20
+  HeaderBackgroundColor #FDEBDD
+}
+package "Observer" <<Frame>> {
+  class "CentralNotificaciones" <<sujeto>> {
+    - observadores: List<ObservadorPedido>
+    + suscribir(o: ObservadorPedido): void
+    + desuscribir(o: ObservadorPedido): void
+    + publicar(evento: EventoPedido): void
+  }
+  interface "ObservadorPedido" {
+    + actualizar(evento: EventoPedido): void
+  }
+  class "EventoPedido" {
+    - tipo: TipoEventoPedido
+    - pedido: Pedido
+  }
+  enum "TipoEventoPedido" {
+    NUEVO_PEDIDO
+    CAMBIO_ESTADO
+  }
+}
+class "ControlPedido" <<control>> {
+  + registrarPedido(...): Pedido
+}
+note bottom of ControlPedido : CU 0-1 (igual en CU 0-2\ny CU 0-3)
+class "ControlPreparacion" <<control>> {
+  + cambiarEstado(pedido, nuevoEstado): Resultado
+  + validarSecuencia(actual, nuevo): boolean
+}
+note bottom of ControlPreparacion : CU 0-4
+class "PantallaCocina" <<boundary>>
+class "PantallaEstadoPedido" <<boundary>>
+class "PantallaCaja" <<boundary>>
+class "Pedido" <<entity>> {
+  - id: String
+  - estado: String
+}
+ControlPedido --> CentralNotificaciones : publica NUEVO_PEDIDO
+ControlPreparacion --> CentralNotificaciones : publica CAMBIO_ESTADO
+CentralNotificaciones o--> "0..*" ObservadorPedido : avisa
+PantallaCocina ..|> ObservadorPedido
+PantallaEstadoPedido ..|> ObservadorPedido
+PantallaCaja ..|> ObservadorPedido
+ObservadorPedido ..> EventoPedido
+EventoPedido --> TipoEventoPedido
+EventoPedido --> Pedido
+note right of PantallaCocina : CU 0-4: ve los pedidos nuevos
+note right of PantallaEstadoPedido : CU 0-6: el cliente ve el estado
+note right of PantallaCaja : CU 0-5: sabe cuando cobrar
+@enduml

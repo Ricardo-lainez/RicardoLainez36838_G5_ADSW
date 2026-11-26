@@ -139,6 +139,14 @@ para deshacerse y solo los comandos exitosos entran al historial.
 | Tarjeta STRATEGY | Clase de la estrategia activa, el contexto que la usa y el resultado de la ultima busqueda. | Strategy |
 | Traza de patrones | Lista paso a paso de cada accion con el patron que intervino, por ejemplo: se crea el comando, el invocador lo ejecuta, se avisa a cada observador y se apila en el historial. | Los tres |
 
+Ademas de la pestana **CRUD completo**, la interfaz tiene una pestana por patron para verlos por separado. Cada una tiene una demostracion en vivo y tres tarjetas: que hace, ventaja y desventaja.
+
+| Pestana | Demostracion | Ventaja que se ve | Desventaja que se ve |
+| --- | --- | --- | --- |
+| Command | Pila real del invocador con la clase de cada comando y lo que guarda para deshacer | Deshacer ultimo | Una clase por operacion y comandos guardados en memoria |
+| Observer | Los tres observadores con su casilla "Suscrito" y los avisos que recibio cada uno | Se quitan y agregan observadores sin tocar el CRUD | Si se quita Vista la tabla deja de actualizarse y el CRUD no da ninguna pista |
+| Strategy | El mismo texto buscado con las tres estrategias, lado a lado | Misma llamada `buscar()`, distinto algoritmo | La interfaz debe conocer las tres clases y una estrategia que no aplica devuelve vacio sin avisar |
+
 Despues de cada accion solo quedan resaltadas (borde de color y etiqueta ACTIVO) las tarjetas de los patrones que participaron. La barra inferior muestra el resultado en verde o rojo.
 
 ![Interfaz grafica del CRUD](captura_gui.png)

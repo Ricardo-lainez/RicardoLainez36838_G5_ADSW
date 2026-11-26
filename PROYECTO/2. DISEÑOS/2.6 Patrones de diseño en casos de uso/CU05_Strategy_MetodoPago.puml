@@ -1,0 +1,47 @@
+@startuml
+title Patrón Strategy en CU 0-5 Cobrar pedido en la caja
+allowmixing
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #3B2A20
+  HeaderBackgroundColor #FDEBDD
+}
+actor Cajero
+class "PantallaCaja" <<boundary>> {
+  + seleccionarMetodoPago(metodo: String)
+  + clickRegistrarPago()
+}
+class "ControlCobro" <<control>> {
+  - estrategia: EstrategiaPago
+  + seleccionarMetodoPago(e: EstrategiaPago): void
+  + registrarPago(pedido: Pedido, dato: String): Resultado
+}
+package "Strategy" <<Frame>> {
+  interface "EstrategiaPago" {
+    + pagar(pedido: Pedido, dato: String): Resultado
+    + getNombre(): String
+  }
+  class "PagoEfectivo" {
+    + pagar(pedido, valorRecibido): Resultado
+    .. valida que alcance y calcula el cambio ..
+  }
+  class "PagoDigital" {
+    + pagar(pedido, numeroComprobante): Resultado
+    .. sin cambio, exige el comprobante ..
+  }
+}
+class "Pedido" <<entity>> {
+  - total: double
+  - estado: String
+  - metodoPago: String
+}
+Cajero --> PantallaCaja : usa
+PantallaCaja --> ControlCobro : elige método y cobra
+ControlCobro o--> EstrategiaPago : estrategia actual
+PagoEfectivo ..|> EstrategiaPago
+PagoDigital ..|> EstrategiaPago
+ControlCobro --> Pedido : registra pago
+note bottom of ControlCobro : la regla no cambia con el método:\nsolo se cobra un pedido listo
+@enduml

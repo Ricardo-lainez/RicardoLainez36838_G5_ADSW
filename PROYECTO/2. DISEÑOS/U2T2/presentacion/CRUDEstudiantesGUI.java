@@ -21,6 +21,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,6 +42,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -54,7 +56,9 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.List;
 
 /**
@@ -64,6 +68,7 @@ import java.util.List;
  * - Observer: cada cambio se avisa a los tres observadores suscritos y se ve quien lo recibio.
  * - Strategy: la busqueda usa la estrategia elegida y se muestra cual clase hizo el trabajo.
  * La traza de patrones lista, paso a paso, que patron intervino en cada accion.
+ * Ademas hay una pestana por patron que muestra que hace, su ventaja y su desventaja.
  */
 public class CRUDEstudiantesGUI extends JFrame {
 
@@ -129,16 +134,47 @@ public class CRUDEstudiantesGUI extends JFrame {
     private final JList<Traza> listaTraza = new JList<>(modeloTraza);
     private int paso = 0;
 
+    // ---------- Pestanas por patron ----------
+    private final CardLayout tarjetas = new CardLayout();
+    private final JPanel contenedor = new JPanel(tarjetas);
+    private final List<JButton> botonesPestana = new java.util.ArrayList<>();
+    private int contadorPrueba = 0;
+    // Command: lo que guarda cada comando de la pila, para mostrarlo
+    private final Deque<String[]> pilaInfo = new ArrayDeque<>();
+    private final DefaultTableModel modeloPila =
+            new DefaultTableModel(new Object[]{"#", "Clase del comando", "Operacion", "Que guarda para deshacer"}, 0) {
+                @Override
+                public boolean isCellEditable(int f, int c) { return false; }
+            };
+    private final JLabel lblCopias = valor("0");
+    // Observer: un observador envuelto por cada suscriptor, para poder quitarlo y volverlo a poner
+    private ObservadorEstudiante obsAuditoria;
+    private ObservadorEstudiante obsNotificacion;
+    private ObservadorEstudiante obsVista;
+    private final DefaultListModel<String> recibidosAuditoria = new DefaultListModel<>();
+    private final DefaultListModel<String> recibidosNotificacion = new DefaultListModel<>();
+    private final DefaultListModel<String> recibidosVista = new DefaultListModel<>();
+    private final JLabel lblAvisos = valor("0");
+    // Strategy: resultados de las tres estrategias con el mismo texto
+    private final JTextField txtComparar = campo("Texto para las 3 estrategias");
+    private final DefaultListModel<String> resId = new DefaultListModel<>();
+    private final DefaultListModel<String> resNombre = new DefaultListModel<>();
+    private final DefaultListModel<String> resRango = new DefaultListModel<>();
+    private final JLabel lblActivaCrud = valor("BusquedaPorIdStrategy");
+
     public CRUDEstudiantesGUI() {
         super("CRUD Estudiantes - Observer, Strategy y Command");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(1360, 820));
+        setMinimumSize(new Dimension(1360, 860));
 
         // Observer: se suscriben tres observadores al control.
         // Cada uno se envuelve para que la traza muestre cuando recibe el aviso.
-        control.agregarObservador(conTraza(chipAuditoria, auditoria));
-        control.agregarObservador(conTraza(chipNotificacion, notificacion));
-        control.agregarObservador(conTraza(chipVista, this::alRecibirEvento));  // la ventana tambien es un observador
+        obsAuditoria = conTraza(chipAuditoria, recibidosAuditoria, auditoria);
+        obsNotificacion = conTraza(chipNotificacion, recibidosNotificacion, notificacion);
+        obsVista = conTraza(chipVista, recibidosVista, this::alRecibirEvento);
+        control.agregarObservador(obsAuditoria);
+        control.agregarObservador(obsNotificacion);
+        control.agregarObservador(obsVista);  // la ventana tambien es un observador
 
         JPanel raiz = new JPanel(new BorderLayout());
         raiz.setBackground(FONDO);
@@ -150,7 +186,17 @@ public class CRUDEstudiantesGUI extends JFrame {
         cuerpo.add(crearFormulario(), BorderLayout.WEST);
         cuerpo.add(crearCentro(), BorderLayout.CENTER);
         cuerpo.add(crearPanelPatrones(), BorderLayout.EAST);
-        raiz.add(cuerpo, BorderLayout.CENTER);
+        // una pestana con el CRUD completo y una por cada patron
+        contenedor.setOpaque(false);
+        contenedor.add(cuerpo, "CRUD");
+        contenedor.add(crearPestanaCommand(), "COMMAND");
+        contenedor.add(crearPestanaObserver(), "OBSERVER");
+        contenedor.add(crearPestanaStrategy(), "STRATEGY");
+        JPanel centro = new JPanel(new BorderLayout());
+        centro.setOpaque(false);
+        centro.add(crearBarraPestanas(), BorderLayout.NORTH);
+        centro.add(contenedor, BorderLayout.CENTER);
+        raiz.add(centro, BorderLayout.CENTER);
         raiz.add(crearBarraEstado(), BorderLayout.SOUTH);
 
         setContentPane(raiz);
@@ -199,6 +245,7 @@ public class CRUDEstudiantesGUI extends JFrame {
         String resultado = invocador.ejecutar(comando);  // aqui se disparan los avisos de Observer
 
         if (comando.fueExitoso()) {
+            pilaInfo.push(new String[]{clase, comando.getDescripcion(), queGuarda(clase)});  // para la pestana Command
             trazar(C_COMMAND, "COMMAND", "Salio bien: se apila en el historial (" + invocador.verHistorial().size() + ")");
         } else {
             trazar(C_COMMAND, "COMMAND", "Fallo: no entra al historial y no se avisa a nadie");
@@ -216,6 +263,7 @@ public class CRUDEstudiantesGUI extends JFrame {
             lblComando.setText("deshacer() de " + historial.get(historial.size() - 1));
             lblReceptor.setText("ControlEstudiante.revertir...()");
         }
+        if (!pilaInfo.isEmpty()) pilaInfo.pop();
         mostrarResultado(invocador.deshacerUltimo());  // si hay algo que deshacer, Observer avisa DESHECHO
         limpiarFormulario();
     }
@@ -265,10 +313,12 @@ public class CRUDEstudiantesGUI extends JFrame {
     // ============================================================
 
     /** Envuelve un observador para que su chip se encienda y la traza diga que recibio el aviso. */
-    private ObservadorEstudiante conTraza(Chip chip, ObservadorEstudiante real) {
+    private ObservadorEstudiante conTraza(Chip chip, DefaultListModel<String> recibidos, ObservadorEstudiante real) {
         return evento -> {
             tarjetaObserver.activar();
             chip.encender();
+            recibidos.add(0, evento.getTipo() + "  " + evento.getEstudiante().getNombre());  // lo que ve en la pestana Observer
+            lblAvisos.setText(String.valueOf(Integer.parseInt(lblAvisos.getText()) + 1));
             lblEvento.setText(evento.getTipo().name());
             trazar(C_OBSERVER, "OBSERVER", chip.nombre + ".actualizar(" + evento.getTipo() + ")");
             real.actualizar(evento);
@@ -514,6 +564,310 @@ public class CRUDEstudiantesGUI extends JFrame {
     }
 
     // ============================================================
+    //  Pestanas: una por patron, con que hace, ventaja y desventaja
+    // ============================================================
+
+    private JComponent crearBarraPestanas() {
+        JPanel barra = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        barra.setOpaque(false);
+        barra.setBorder(BorderFactory.createEmptyBorder(14, 18, 0, 18));
+        String[][] pestanas = {{"CRUD completo", "CRUD"}, {"Command", "COMMAND"}, {"Observer", "OBSERVER"}, {"Strategy", "STRATEGY"}};
+        Color[] colores = {TEXTO, C_COMMAND, C_OBSERVER, C_STRATEGY};
+        for (int i = 0; i < pestanas.length; i++) {
+            final String clave = pestanas[i][1];
+            final Color color = colores[i];
+            JButton b = boton(pestanas[i][0], Color.WHITE, color, e -> mostrarPestana(clave));
+            b.putClientProperty("color", color);
+            b.putClientProperty("clave", clave);
+            botonesPestana.add(b);
+            barra.add(b);
+        }
+        mostrarPestanaVisual("CRUD");
+        return barra;
+    }
+
+    private void mostrarPestana(String clave) {
+        tarjetas.show(contenedor, clave);
+        mostrarPestanaVisual(clave);
+    }
+
+    private void mostrarPestanaVisual(String clave) {
+        for (JButton b : botonesPestana) {
+            boolean activa = clave.equals(b.getClientProperty("clave"));
+            Color c = (Color) b.getClientProperty("color");
+            b.setBackground(activa ? c : Color.WHITE);
+            b.setForeground(activa ? Color.WHITE : c);
+        }
+    }
+
+    /** Arma una pestana: a la izquierda la demostracion y a la derecha que hace, ventaja y desventaja. */
+    private JComponent pestana(JComponent demo, Color color, String queHace, String ventaja, String desventaja, JLabel dato) {
+        JPanel p = new JPanel(new BorderLayout(16, 0));
+        p.setOpaque(false);
+        p.setBorder(BorderFactory.createEmptyBorder(14, 18, 10, 18));
+        JPanel columna = new JPanel();
+        columna.setOpaque(false);
+        columna.setLayout(new BoxLayout(columna, BoxLayout.Y_AXIS));
+        columna.setPreferredSize(new Dimension(380, 0));
+        columna.add(tarjetaTexto("Que hace", queHace, color, null));
+        columna.add(Box.createVerticalStrut(12));
+        columna.add(tarjetaTexto("Ventaja (se ve aqui)", ventaja, EXITO, null));
+        columna.add(Box.createVerticalStrut(12));
+        columna.add(tarjetaTexto("Desventaja (se ve aqui)", desventaja, ERROR, dato));
+        columna.add(Box.createVerticalGlue());
+        p.add(demo, BorderLayout.CENTER);
+        p.add(columna, BorderLayout.EAST);
+        return p;
+    }
+
+    private static JComponent tarjetaTexto(String titulo, String texto, Color color, JLabel dato) {
+        Tarjeta t = new Tarjeta();
+        t.borde = color;
+        t.grosor = 2;
+        t.setLayout(new BoxLayout(t, BoxLayout.Y_AXIS));
+        t.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JLabel tt = new JLabel(titulo + "  ");
+        tt.setFont(new Font(FAMILIA, Font.BOLD, 14));
+        tt.setForeground(color);
+        tt.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JLabel cuerpo = new JLabel("<html><body style='width:265px'>" + texto + "</body></html>");
+        cuerpo.setFont(F_NORMAL);
+        cuerpo.setForeground(TEXTO);
+        cuerpo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        cuerpo.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
+        t.add(tt);
+        t.add(cuerpo);
+        if (dato != null) {
+            dato.setForeground(ERROR);
+            dato.setAlignmentX(Component.LEFT_ALIGNMENT);
+            dato.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
+            t.add(dato);
+        }
+        t.setMaximumSize(new Dimension(Integer.MAX_VALUE, t.getPreferredSize().height + 10));
+        return t;
+    }
+
+    /** Registra un estudiante de prueba con un comando, para generar eventos desde cualquier pestana. */
+    private void registrarPrueba() {
+        contadorPrueba++;
+        String id = String.format("L0099%04d", contadorPrueba);
+        ejecutarComando("Registrar (prueba)",
+                new RegistrarEstudianteComando(control, id, "Estudiante de prueba " + contadorPrueba, 18 + contadorPrueba % 6),
+                "agregarEstudiante()");
+    }
+
+    private String queGuarda(String claseComando) {
+        switch (claseComando) {
+            case "RegistrarEstudianteComando": return "el ID, para borrarlo";
+            case "ActualizarEstudianteComando": return "copia con los datos anteriores";
+            case "EliminarEstudianteComando": return "copia completa del estudiante";
+            default: return "-";
+        }
+    }
+
+    // ---------- Pestana Command ----------
+    private JComponent crearPestanaCommand() {
+        Tarjeta demo = new Tarjeta();
+        demo.setLayout(new BorderLayout(0, 12));
+        JPanel cab = new JPanel(new BorderLayout());
+        cab.setOpaque(false);
+        cab.add(tituloSeccion("Pila de comandos (el de arriba se deshace primero)"), BorderLayout.WEST);
+        JPanel acciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        acciones.setOpaque(false);
+        acciones.add(boton("Registrar estudiante de prueba", new Color(0xECEDFD), C_COMMAND, e -> registrarPrueba()));
+        acciones.add(boton("Deshacer ultimo", C_COMMAND, Color.WHITE, e -> deshacer()));
+        cab.add(acciones, BorderLayout.EAST);
+        JTable t = new JTable(modeloPila);
+        estilizarTablaSimple(t, C_COMMAND);
+        t.getColumnModel().getColumn(0).setPreferredWidth(40);
+        t.getColumnModel().getColumn(1).setPreferredWidth(230);
+        t.getColumnModel().getColumn(2).setPreferredWidth(260);
+        t.getColumnModel().getColumn(3).setPreferredWidth(230);
+        JScrollPane sp = new JScrollPane(t);
+        sp.setBorder(BorderFactory.createLineBorder(BORDE));
+        sp.getViewport().setBackground(TARJETA);
+        sp.getVerticalScrollBar().setUI(new BarraFina());
+        demo.add(cab, BorderLayout.NORTH);
+        demo.add(sp, BorderLayout.CENTER);
+        demo.add(textoAyuda("Cada fila es un objeto comando que el invocador guardo. Los comandos que fallan no entran."), BorderLayout.SOUTH);
+        return pestana(demo, C_COMMAND,
+                "Cada operacion del CRUD es un objeto comando. El invocador lo ejecuta sin saber si es registrar, actualizar o eliminar, y lo guarda en una pila.",
+                "Se puede <b>deshacer</b>. La pila de la izquierda es el historial real: registra o elimina en la pestana CRUD, o usa el boton de prueba, y despues presiona Deshacer ultimo.",
+                "Mas clases y mas memoria. Hay una clase por operacion (5 archivos en <i>logica/command</i>) y cada comando guarda datos para poder deshacer. Si la pila crece sin limite, crece la memoria usada:",
+                lblCopias);
+    }
+
+    // ---------- Pestana Observer ----------
+    private JComponent crearPestanaObserver() {
+        Tarjeta demo = new Tarjeta();
+        demo.setLayout(new BorderLayout(0, 12));
+        JPanel cab = new JPanel(new BorderLayout());
+        cab.setOpaque(false);
+        cab.add(tituloSeccion("Observadores suscritos al control"), BorderLayout.WEST);
+        cab.add(boton("Registrar estudiante de prueba", new Color(0xE3F6EF), C_OBSERVER, e -> registrarPrueba()), BorderLayout.EAST);
+        JPanel columnas = new JPanel(new GridLayout(1, 3, 12, 0));
+        columnas.setOpaque(false);
+        columnas.add(columnaObservador("Auditoria", "Guarda la bitacora", obsAuditoria, recibidosAuditoria));
+        columnas.add(columnaObservador("Notificacion", "Imprime el aviso en consola", obsNotificacion, recibidosNotificacion));
+        columnas.add(columnaObservador("Vista", "Refresca la tabla del CRUD", obsVista, recibidosVista));
+        demo.add(cab, BorderLayout.NORTH);
+        demo.add(columnas, BorderLayout.CENTER);
+        demo.add(textoAyuda("Desmarca un observador y registra: el CRUD sigue igual, solo ese observador deja de recibir."), BorderLayout.SOUTH);
+        return pestana(demo, C_OBSERVER,
+                "Cuando el CRUD cambia, el control avisa a todos los observadores suscritos. El control no sabe quienes son ni que hacen con el aviso.",
+                "Se agregan o se quitan observadores <b>sin tocar el CRUD</b>. Desmarca Auditoria y registra un estudiante: el registro funciona igual y la auditoria ya no anota.",
+                "El flujo queda oculto. Si desmarcas Vista, el registro funciona pero la tabla del CRUD deja de actualizarse, y en <i>agregarEstudiante</i> no hay ninguna pista de por que. Ademas cada aviso llega a todos. Avisos entregados:",
+                lblAvisos);
+    }
+
+    private JComponent columnaObservador(String nombre, String rol, ObservadorEstudiante obs, DefaultListModel<String> recibidos) {
+        JPanel col = new JPanel(new BorderLayout(0, 6));
+        col.setOpaque(false);
+        JPanel cab = new JPanel(new BorderLayout());
+        cab.setOpaque(false);
+        JLabel n = new JLabel(nombre);
+        n.setFont(new Font(FAMILIA, Font.BOLD, 14));
+        n.setForeground(C_OBSERVER);
+        JCheckBox suscrito = new JCheckBox("Suscrito", true);
+        suscrito.setOpaque(false);
+        suscrito.setFont(F_NEGRITA);
+        suscrito.setForeground(TEXTO);
+        suscrito.addActionListener(e -> {
+            // Observer: aqui se agrega o se quita el observador mientras el programa corre
+            iniciarAccion(suscrito.isSelected() ? "Suscribir " + nombre : "Quitar " + nombre);
+            tarjetaObserver.activar();
+            if (suscrito.isSelected()) {
+                control.agregarObservador(obs);
+                trazar(C_OBSERVER, "OBSERVER", "control.agregarObservador(" + nombre + ")");
+            } else {
+                control.quitarObservador(obs);
+                trazar(C_OBSERVER, "OBSERVER", "control.quitarObservador(" + nombre + "): ya no recibe avisos");
+            }
+            lblEstado.setForeground(TEXTO_SUAVE);
+            lblEstado.setText(nombre + (suscrito.isSelected() ? " vuelve a recibir avisos." : " ya no recibe avisos. El CRUD no cambio."));
+        });
+        cab.add(n, BorderLayout.WEST);
+        cab.add(suscrito, BorderLayout.EAST);
+        JPanel arriba = new JPanel(new BorderLayout());
+        arriba.setOpaque(false);
+        arriba.add(cab, BorderLayout.NORTH);
+        arriba.add(textoAyuda(rol), BorderLayout.SOUTH);
+        JList<String> lista = new JList<>(recibidos);
+        lista.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+        lista.setBackground(new Color(0xF3FBF8));
+        lista.setFocusable(false);
+        JScrollPane sp = new JScrollPane(lista);
+        sp.setBorder(BorderFactory.createLineBorder(new Color(0xCDEBDF)));
+        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        sp.getVerticalScrollBar().setUI(new BarraFina());
+        col.add(arriba, BorderLayout.NORTH);
+        col.add(sp, BorderLayout.CENTER);
+        return col;
+    }
+
+    // ---------- Pestana Strategy ----------
+    private JComponent crearPestanaStrategy() {
+        Tarjeta demo = new Tarjeta();
+        demo.setLayout(new BorderLayout(0, 12));
+        JPanel cab = new JPanel(new BorderLayout(8, 8));
+        cab.setOpaque(false);
+        cab.add(tituloSeccion("Las tres estrategias con el mismo texto"), BorderLayout.NORTH);
+        JPanel fila = new JPanel(new BorderLayout(8, 0));
+        fila.setOpaque(false);
+        fila.add(txtComparar, BorderLayout.CENTER);
+        txtComparar.addActionListener(e -> compararEstrategias());
+        fila.add(boton("Comparar las 3 estrategias", C_STRATEGY, Color.WHITE, e -> compararEstrategias()), BorderLayout.EAST);
+        cab.add(fila, BorderLayout.CENTER);
+        JPanel activa = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+        activa.setOpaque(false);
+        JLabel l = new JLabel("Estrategia activa en la pestana CRUD:");
+        l.setFont(F_PEQUENA);
+        l.setForeground(TEXTO_SUAVE);
+        activa.add(l);
+        activa.add(lblActivaCrud);
+        cab.add(activa, BorderLayout.SOUTH);
+        JPanel columnas = new JPanel(new GridLayout(1, 3, 12, 0));
+        columnas.setOpaque(false);
+        columnas.add(columnaResultado("BusquedaPorIdStrategy", resId));
+        columnas.add(columnaResultado("BusquedaPorNombreStrategy", resNombre));
+        columnas.add(columnaResultado("BusquedaPorRangoEdadStrategy", resRango));
+        demo.add(cab, BorderLayout.NORTH);
+        demo.add(columnas, BorderLayout.CENTER);
+        return pestana(demo, C_STRATEGY,
+                "La busqueda tiene tres algoritmos intercambiables. Los tres cumplen la interfaz <i>EstrategiaBusquedaEstudiante</i> y el control usa el que tenga asignado.",
+                "Mismo metodo, tres resultados. Aqui se llama a <b>buscar()</b> de cada estrategia con el mismo texto: solo cambia el algoritmo. Una busqueda nueva seria otra clase, sin tocar el control.",
+                "Quien elige tiene que conocer todas las clases (la interfaz las crea con un <i>switch</i>) y cada busqueda nueva es un archivo mas. Ademas, si el texto no sirve para una estrategia, como 'an' para el rango de edad, devuelve una lista vacia sin avisar.",
+                null);
+    }
+
+    private JComponent columnaResultado(String clase, DefaultListModel<String> modelo) {
+        JPanel col = new JPanel(new BorderLayout(0, 6));
+        col.setOpaque(false);
+        JLabel n = new JLabel(clase);
+        n.setFont(new Font(Font.MONOSPACED, Font.BOLD, 12));
+        n.setForeground(C_STRATEGY);
+        JList<String> lista = new JList<>(modelo);
+        lista.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+        lista.setBackground(new Color(0xFFF8EC));
+        lista.setFocusable(false);
+        JScrollPane sp = new JScrollPane(lista);
+        sp.setBorder(BorderFactory.createLineBorder(new Color(0xF4DDB4)));
+        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        sp.getVerticalScrollBar().setUI(new BarraFina());
+        col.add(n, BorderLayout.NORTH);
+        col.add(sp, BorderLayout.CENTER);
+        return col;
+    }
+
+    /** Strategy: el mismo texto pasa por las tres estrategias, cada una con su algoritmo. */
+    private void compararEstrategias() {
+        String texto = txtComparar.getText().trim();
+        if (texto.isEmpty()) return;
+        iniciarAccion("Comparar estrategias");
+        tarjetaStrategy.activar();
+        List<Estudiante> todos = control.listarTodos();
+        EstrategiaBusquedaEstudiante[] estrategias = {
+                new BusquedaPorIdStrategy(), new BusquedaPorNombreStrategy(), new BusquedaPorRangoEdadStrategy()};
+        DefaultListModel<?>[] modelos = {resId, resNombre, resRango};
+        for (int i = 0; i < estrategias.length; i++) {
+            List<Estudiante> r = estrategias[i].buscar(todos, texto);  // misma llamada, distinto algoritmo
+            @SuppressWarnings("unchecked")
+            DefaultListModel<String> m = (DefaultListModel<String>) modelos[i];
+            m.clear();
+            m.addElement(r.size() + " resultado(s)");
+            for (Estudiante e : r) m.addElement(e.getId() + "  " + e.getNombre() + "  (" + e.getEdad() + ")");
+            if (r.isEmpty()) m.addElement("(lista vacia, sin aviso)");
+            trazar(C_STRATEGY, "STRATEGY", nombresEstrategias[i] + ".buscar('" + texto + "') -> " + r.size());
+        }
+        lblEstado.setForeground(TEXTO_SUAVE);
+        lblEstado.setText("Se ejecutaron las 3 estrategias con '" + texto + "'.");
+    }
+
+    private void estilizarTablaSimple(JTable t, Color color) {
+        t.setFont(F_NORMAL);
+        t.setRowHeight(30);
+        t.setShowVerticalLines(false);
+        t.setGridColor(new Color(0xEEF0F5));
+        t.setFillsViewportHeight(true);
+        t.setFocusable(false);
+        t.setRowSelectionAllowed(false);
+        t.getTableHeader().setReorderingAllowed(false);
+        t.getTableHeader().setPreferredSize(new Dimension(0, 32));
+        t.getTableHeader().setDefaultRenderer(tabla.getTableHeader().getDefaultRenderer());
+        t.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable tb, Object v, boolean s, boolean f, int r, int c) {
+                JLabel l = (JLabel) super.getTableCellRendererComponent(tb, v, false, false, r, c);
+                l.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+                l.setBackground(r == 0 ? new Color(0xECECFD) : (r % 2 == 0 ? TARJETA : new Color(0xFAFBFD)));
+                l.setFont(c == 1 ? new Font(Font.MONOSPACED, Font.BOLD, 12) : F_NORMAL);
+                l.setForeground(c == 1 ? color : TEXTO);
+                return l;
+            }
+        });
+    }
+
+    // ============================================================
     //  Utilidades
     // ============================================================
 
@@ -558,11 +912,19 @@ public class CRUDEstudiantesGUI extends JFrame {
             modeloHistorial.addElement(historial.get(i));
         }
         if (historial.isEmpty()) modeloHistorial.addElement("(vacio)");
+        // pestana Command: la misma pila con lo que guarda cada comando
+        modeloPila.setRowCount(0);
+        int n = pilaInfo.size();
+        for (String[] c : pilaInfo) {
+            modeloPila.addRow(new Object[]{n--, c[0], c[1], c[2]});
+        }
+        lblCopias.setText(pilaInfo.size() + " comandos guardados en memoria");
     }
 
     private void marcarEstrategia(int indice) {
         estrategiaActual = indice;
         lblEstrategia.setText(nombresEstrategias[indice]);
+        lblActivaCrud.setText(nombresEstrategias[indice]);
         for (int i = 0; i < 3; i++) {
             boolean activo = i == indice;
             botonesEstrategia[i].setBackground(activo ? C_STRATEGY : new Color(0xFFF4E0));

@@ -4,9 +4,10 @@
 |---|---|
 | 2.1 Casos de uso nivel 0 | Guía 1 con los 8 casos de uso de nivel 0, matriz RF-CU y diagrama puente |
 | 2.2 Clases de analisis y secuencias | Guía 2 con clases de análisis y un diagrama de secuencia por cada caso de uso |
-| 2.3 Mockups | Maquetas de las pantallas de los 4 requisitos terminados (sprints 1 a 4) y modelo de datos propuesto |
+| 2.3 Mockups | Maquetas de las pantallas de los requisitos trabajados (sprints 1 a 5) y modelo de datos propuesto |
 | 2.4 Piezas visuales | Logotipo de Bocatto y su versión animada |
-| 2.5 Diagramas de clases por requisito | Diagrama de clases de RF002, RF004, RF005 y RF006 generado con prompt y metadatos de trazabilidad |
+| 2.5 Diagramas de clases por requisito | Diagrama de clases de RF001, RF002, RF004, RF005 y RF006 generado con prompt y metadatos de trazabilidad |
+| 2.6 Patrones de diseño en casos de uso | Patrones Observer (CU 0-4) y Strategy (CU 0-5) aplicados a los casos de uso de nivel 0, con ventajas, desventajas y el motivo de no usar Command |
 | U2T1 | CRUD de estudiantes con arquitectura MVC, ID ESPE no modificable e interfaz grafica (Java Swing) |
 | U2T2 | CRUD de estudiantes en capas con los patrones de comportamiento Observer, Strategy y Command, interfaz grafica y pruebas por consola |
 
